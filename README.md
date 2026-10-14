@@ -3,7 +3,7 @@
 <div align="center">
 
 **Next-Gen Technical Interview & Practice Arena**  
-*轻量化 · 纯本地私有存储 · 用户自有 AI 驱动的技术面试备战考场*
+*轻量化 · 纯本地私有存储 · 用户自有 AI 驱动的技术面试备战工具*
 
 [![Node Version](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)](#)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-0%20(Zero)-6366f1)](#)
@@ -107,24 +107,24 @@ Open your browser and navigate to: **`http://localhost:8080/`**
 
 ## 🤖 AI Model Configuration
 
-| Provider | Pricing & Characteristic | Setup Guide |
-| :--- | :--- | :--- |
-| **Default Free (Pollinations)** | **Zero key required, 100% free** | Pre-configured by default. Great for quick first runs. |
-| **Zhipu GLM (Recommended)** | **Generous free quota, ultra-fast** | Register at `open.bigmodel.cn` → Generate Key → Model: `glm-4-flash` |
-| **DeepSeek Official API** | Top-tier question depth, minimal cost | Register at `platform.deepseek.com` → Generate Key → Model: `deepseek-chat` |
-| **SiliconFlow** | Fast mainland CDN, initial credits | Register at `cloud.siliconflow.cn` → Enter Key → Model: `DeepSeek-V3` |
-| **Custom (OpenAI Proxy)** | Compatible with any OpenAI endpoint | Fill in `Base URL`, `Model Name`, and `API Key` |
+| Provider                        | Pricing & Characteristic              | Setup Guide                                                                 |
+| :------------------------------ | :------------------------------------ | :-------------------------------------------------------------------------- |
+| **Default Free (Pollinations)** | **Zero key required, 100% free**      | Pre-configured by default. Great for quick first runs.                      |
+| **Zhipu GLM (Recommended)**     | **Generous free quota, ultra-fast**   | Register at `open.bigmodel.cn` → Generate Key → Model: `glm-4-flash`        |
+| **DeepSeek Official API**       | Top-tier question depth, minimal cost | Register at `platform.deepseek.com` → Generate Key → Model: `deepseek-chat` |
+| **SiliconFlow**                 | Fast mainland CDN, initial credits    | Register at `cloud.siliconflow.cn` → Enter Key → Model: `DeepSeek-V3`       |
+| **Custom (OpenAI Proxy)**       | Compatible with any OpenAI endpoint   | Fill in `Base URL`, `Model Name`, and `API Key`                             |
 
 ---
 
 ## ⌨️ Keyboard Shortcuts Reference
 
-| Shortcut | Description |
-| :--- | :--- |
-| `1` or `A` | Toggle Option A |
-| `2` or `B` | Toggle Option B |
-| `3` or `C` | Toggle Option C |
-| `4` or `D` | Toggle Option D |
+| Shortcut                     | Description                 |
+| :--------------------------- | :-------------------------- |
+| `1` or `A`                   | Toggle Option A             |
+| `2` or `B`                   | Toggle Option B             |
+| `3` or `C`                   | Toggle Option C             |
+| `4` or `D`                   | Toggle Option D             |
 | `Ctrl + Enter` / `⌘ + Enter` | Submit Exam / Hand in paper |
 
 ---
@@ -216,13 +216,13 @@ node server.js 9000
 
 ## 🤖 大模型与出题配置
 
-| 服务商 | 费用与特点 | 配置指南 |
-| :--- | :--- | :--- |
-| **免费默认通道 (Pollinations)** | **完全免 Key，开箱即用** | EasyOffer 默认启用，适合无 Key 时零门槛试用体验 |
-| **智谱 GLM (推荐)** | **免费额度高、速度极快** | 注册 `open.bigmodel.cn` → 创建 API Key → 模型选 `glm-4-flash` |
-| **DeepSeek 官方 API** | 极高性价比、题目深度极佳 | 注册 `platform.deepseek.com` → 创建 Key → 模型选 `deepseek-chat` |
-| **硅基流动 (SiliconFlow)** | 注册送额度、国内 CDN 极速 | 注册 `cloud.siliconflow.cn` → 填写密钥 → 模型选 `DeepSeek-V3` |
-| **自定义 (Custom)** | 兼容任意第三方 OpenAI 代理 | 填入 `baseUrl`、`model` 和 `apiKey` |
+| 服务商                          | 费用与特点                 | 配置指南                                                         |
+| :------------------------------ | :------------------------- | :--------------------------------------------------------------- |
+| **免费默认通道 (Pollinations)** | **完全免 Key，开箱即用**   | EasyOffer 默认启用，适合无 Key 时零门槛试用体验                  |
+| **智谱 GLM (推荐)**             | **免费额度高、速度极快**   | 注册 `open.bigmodel.cn` → 创建 API Key → 模型选 `glm-4-flash`    |
+| **DeepSeek 官方 API**           | 极高性价比、题目深度极佳   | 注册 `platform.deepseek.com` → 创建 Key → 模型选 `deepseek-chat` |
+| **硅基流动 (SiliconFlow)**      | 注册送额度、国内 CDN 极速  | 注册 `cloud.siliconflow.cn` → 填写密钥 → 模型选 `DeepSeek-V3`    |
+| **自定义 (Custom)**             | 兼容任意第三方 OpenAI 代理 | 填入 `baseUrl`、`model` 和 `apiKey`                              |
 
 ---
 
