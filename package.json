@@ -1,17 +1,19 @@
 {
-  "name": "frontend-interview-quiz",
-  "version": "1.0.0",
-  "description": "前端面试刷题工具：面试模拟 + 本地题库 + 错题本 + 可选 AI 出题，零依赖",
+  "name": "easyoffer",
+  "version": "2.0.0",
+  "description": "EasyOffer —— Next-Gen Technical Interview & Practice Arena（纯本地轻量架构，题目由用户私有 AI 生成沉淀）",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "keywords": [
-    "frontend",
+    "easyoffer",
     "interview",
     "quiz",
-    "javascript",
-    "vue"
+    "frontend",
+    "ai",
+    "i18n"
   ],
   "license": "MIT",
   "engines": {

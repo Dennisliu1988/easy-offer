@@ -1,1235 +1,3045 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>前端面试刷题器</title>
+<title>EasyOffer | Next-Gen Technical Interview & Practice Arena</title>
+<!-- EasyOffer 专属矢量 Favicon (E + Offer Checkmark) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22eo%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22><stop offset=%220%25%22 stop-color=%22%234f46e5%22/><stop offset=%2250%25%22 stop-color=%22%2306b6d4%22/><stop offset=%22100%25%22 stop-color=%22%2310b981%22/></linearGradient></defs><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22url(%23eo)%22/><path d=%22M24 36 L50 36 M24 50 L42 50 M24 64 L50 64%22 stroke=%22%23ffffff%22 stroke-width=%228%22 stroke-linecap=%22round%22/><path d=%22M46 54 L60 68 L82 32%22 stroke=%22%23ffffff%22 stroke-width=%228%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 fill=%22none%22/></svg>">
 <style>
-  :root{
-    --bg:#f5f7fa; --panel:#ffffff; --ink:#1f2937; --muted:#6b7280;
-    --line:#e5e7eb; --brand:#2563eb; --brand-soft:#eff6ff;
-    --ok:#16a34a; --ok-soft:#ecfdf5; --bad:#dc2626; --bad-soft:#fef2f2;
-    --warn:#d97706; --warn-soft:#fffbeb; --wrong:#7c3aed; --wrong-soft:#f5f3ff;
+  /* ================= 变量与主题定义 ================= */
+  :root[data-theme="dark"] {
+    --bg-base: #090a0f;
+    --bg-surface: #12141c;
+    --bg-surface-elevated: #181b26;
+    --bg-hover: #1e2230;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --brand: #6366f1;
+    --brand-hover: #4f46e5;
+    --brand-glow: rgba(99, 102, 241, 0.28);
+    --brand-soft: rgba(99, 102, 241, 0.14);
+    --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #06b6d4 50%, #10b981 100%);
+    --ok: #10b981;
+    --ok-glow: rgba(16, 185, 129, 0.25);
+    --ok-soft: rgba(16, 185, 129, 0.14);
+    --bad: #f43f5e;
+    --bad-glow: rgba(244, 63, 94, 0.25);
+    --bad-soft: rgba(244, 63, 94, 0.14);
+    --warn: #f59e0b;
+    --warn-soft: rgba(245, 158, 11, 0.14);
+    --purple: #a855f7;
+    --purple-soft: rgba(168, 85, 247, 0.14);
+    --card-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.45);
+    --sidebar-bg: rgba(14, 16, 23, 0.95);
+    --header-bg: rgba(18, 20, 28, 0.88);
   }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.6}
-  header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;
-    align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-  header h1{font-size:18px;margin:0;font-weight:700}
-  nav{display:flex;gap:6px;flex-wrap:wrap}
-  nav button{background:transparent;border:1px solid var(--line);color:var(--muted);
-    padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
-  nav button.active{background:var(--brand);border-color:var(--brand);color:#fff}
-  nav button:hover{border-color:var(--brand);color:var(--brand)}
-  .wrap{max-width:920px;margin:0 auto;padding:20px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
-  .btn{display:inline-block;border:none;border-radius:10px;padding:10px 18px;font-size:15px;cursor:pointer;
-    background:var(--brand);color:#fff;font-weight:600}
-  .btn:hover{filter:brightness(1.05)}
-  .btn.ghost{background:var(--brand-soft);color:var(--brand)}
-  .btn.soft{background:#f3f4f6;color:var(--ink)}
-  .btn:disabled{opacity:.55;cursor:not-allowed}
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
-  .stat{background:var(--brand-soft);border-radius:12px;padding:12px 16px;min-width:110px}
-  .stat b{display:block;font-size:24px;color:var(--brand)}
-  .stat span{font-size:12px;color:var(--muted)}
-  .q{counter-increment:q;background:var(--panel);border:1px solid var(--line);border-radius:12px;
-    padding:16px;margin-bottom:14px}
-  .badges{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-  .badge{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-  .badge.t-single{background:var(--brand-soft);color:var(--brand);border-color:#bfdbfe}
-  .badge.t-multiple{background:var(--warn-soft);color:var(--warn);border-color:#fde68a}
-  .badge.t-boolean{background:var(--wrong-soft);color:var(--wrong);border-color:#ddd6fe}
-  .badge.cat{background:#f1f5f9;color:#475569}
-  .q .stem{font-weight:600;margin-bottom:10px}
-  .q .stem::before{content:counter(q) ". ";color:var(--brand)}
-  .opt{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:1px solid var(--line);
-    border-radius:10px;margin-bottom:8px;cursor:pointer}
-  .opt:hover{background:#f9fafb}
-  .opt input{margin-top:5px}
-  .opt.correct{background:var(--ok-soft);border-color:#bbf7d0}
-  .opt.wrong{background:var(--bad-soft);border-color:#fecaca}
-  .explain{margin-top:10px;padding:10px 12px;background:#f8fafc;border-left:3px solid var(--brand);
-    border-radius:6px;font-size:13px;color:#334155;white-space:pre-wrap}
-  .yourans{font-size:13px;margin-top:6px}
-  .yourans .yk{color:var(--bad);font-weight:600}
-  .score-big{font-size:46px;font-weight:800;color:var(--brand)}
-  .list-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;
-    border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer}
-  .list-item:hover{background:#f9fafb}
-  .list-item .meta{font-size:12px;color:var(--muted)}
-  .pill{font-size:11px;padding:2px 8px;border-radius:999px}
-  .pill.normal{background:var(--brand-soft);color:var(--brand)}
-  .pill.wrongbook{background:var(--wrong-soft);color:var(--wrong)}
-  .muted{color:var(--muted)}
-  .loading{text-align:center;padding:40px;color:var(--muted)}
-  .spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--brand);
-    border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#111827;color:#fff;
-    padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .25s;z-index:50;max-width:80%}
-  .toast.show{opacity:.95}
-  label.fld{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
-  input[type=text],input[type=password],select{width:100%;padding:9px 11px;border:1px solid var(--line);
-    border-radius:9px;font-size:14px;background:#fff}
-  .hint{font-size:12px;color:var(--muted);margin-top:6px}
-  .progress{font-size:13px;color:var(--muted);margin-bottom:12px}
-  .cat-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .cat-grid .c{font-size:12px;padding:6px 10px;border-radius:8px;background:#f1f5f9;color:#475569}
-  details.card{ cursor:default }
-  details.card > summary{ list-style:none; padding:4px 2px; outline:none; user-select:none }
-  details.card > summary::-webkit-details-marker{ display:none }
+
+  :root[data-theme="light"] {
+    --bg-base: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f1f5f9;
+    --bg-hover: #e2e8f0;
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.16);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --brand: #4f46e5;
+    --brand-hover: #4338ca;
+    --brand-glow: rgba(79, 70, 229, 0.2);
+    --brand-soft: rgba(79, 70, 229, 0.08);
+    --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #0284c7 50%, #059669 100%);
+    --ok: #059669;
+    --ok-glow: rgba(5, 150, 105, 0.2);
+    --ok-soft: rgba(5, 150, 105, 0.08);
+    --bad: #e11d48;
+    --bad-glow: rgba(225, 29, 72, 0.2);
+    --bad-soft: rgba(225, 29, 72, 0.08);
+    --warn: #d97706;
+    --warn-soft: rgba(217, 119, 6, 0.08);
+    --purple: #9333ea;
+    --purple-soft: rgba(147, 51, 234, 0.08);
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+    --sidebar-bg: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.92);
+  }
+
+  :root {
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sidebar-w: 240px;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  /* 顶部导航 */
+  header {
+    background: var(--header-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .brand-logo-svg {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 20px var(--brand-glow);
+    display: block;
+    flex-shrink: 0;
+  }
+  .brand-text h1 {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+  }
+  .brand-text .sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  nav {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  nav button {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  nav button:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+  }
+  nav button.active {
+    background: var(--bg-surface-elevated);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .action-btn {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .action-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+    background: var(--bg-hover);
+  }
+
+  /* 主体左右布局 */
+  .app-container {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* 左侧边栏 - 岗位角色 */
+  aside.sidebar {
+    width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-subtle);
+    padding: 16px 14px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .sidebar-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 0 8px 4px;
+  }
+  .role-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .role-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .role-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+  }
+  .role-item.active {
+    background: var(--brand-soft);
+    border-color: rgba(99, 102, 241, 0.35);
+    color: var(--brand);
+    font-weight: 600;
+  }
+  .role-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .role-tag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+  .role-tag.active {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .role-tag.dev {
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+
+  /* 主工作区 */
+  main.main-content {
+    flex: 1;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    width: 100%;
+  }
+
+  /* 卡片 */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--card-shadow);
+    transition: border-color 0.2s ease, background 0.25s ease;
+  }
+  .card:hover {
+    border-color: var(--border-strong);
+  }
+
+  /* 按钮体系 */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--brand);
+    color: #fff;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px var(--brand-glow);
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: var(--brand-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--brand-glow);
+  }
+  .btn.ghost {
+    background: var(--brand-soft);
+    color: var(--brand);
+    box-shadow: none;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+  .btn.ghost:hover {
+    background: rgba(99, 102, 241, 0.22);
+  }
+  .btn.soft {
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
+    box-shadow: none;
+    border: 1px solid var(--border-subtle);
+  }
+  .btn.soft:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-strong);
+  }
+  .btn.danger {
+    background: var(--bad-soft);
+    color: var(--bad);
+    box-shadow: none;
+    border: 1px solid rgba(244, 63, 94, 0.25);
+  }
+  .btn.danger:hover {
+    background: rgba(244, 63, 94, 0.25);
+  }
+  .btn.sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* 统计面板 */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .stat-box {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-box::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--brand-gradient);
+    opacity: 0.8;
+  }
+  .stat-box b {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    line-height: 1.2;
+  }
+  .stat-box span {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* 排除法组件 */
+  .scope-panel {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+  .scope-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .scope-header h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .exclusion-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .exclusion-input-row input {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .exclusion-input-row input:focus {
+    border-color: var(--brand);
+  }
+  .exclusion-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .exclusion-chip {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .exclusion-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .exclusion-chip.active {
+    background: var(--bad-soft);
+    color: var(--bad);
+    border-color: rgba(244, 63, 94, 0.4);
+    font-weight: 600;
+  }
+  .exclusion-chip.active::before {
+    content: "✕ ";
+  }
+  .tag-pill {
+    background: var(--bad-soft);
+    color: var(--bad);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+  }
+  .tag-pill .remove-btn {
+    cursor: pointer;
+    opacity: 0.7;
+    font-weight: 700;
+  }
+  .tag-pill .remove-btn:hover { opacity: 1; }
+
+  /* 练习组列表与分页 */
+  .round-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    gap: 12px;
+  }
+  .round-item:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-hover);
+    transform: translateX(2px);
+  }
+  .round-content {
+    flex: 1;
+    cursor: pointer;
+  }
+  .round-title {
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+  }
+  .round-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .del-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+  .del-btn:hover {
+    background: var(--bad-soft);
+    color: var(--bad);
+    border-color: rgba(244, 63, 94, 0.3);
+  }
+
+  .pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .page-btns {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .page-num {
+    min-width: 30px;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    transition: all 0.15s ease;
+  }
+  .page-num:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .page-num.active {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* 试题与选项 */
+  .q {
+    counter-increment: q;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 18px;
+    transition: border-color 0.2s ease;
+  }
+  .q:hover { border-color: var(--border-strong); }
+  .badges {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .badge.t-single { background: var(--brand-soft); color: var(--brand); border-color: rgba(99, 102, 241, 0.3); }
+  .badge.t-multiple { background: var(--warn-soft); color: var(--warn); border-color: rgba(245, 158, 11, 0.3); }
+  .badge.t-boolean { background: var(--purple-soft); color: var(--purple); border-color: rgba(168, 85, 247, 0.3); }
+  .badge.cat { background: var(--bg-surface-elevated); color: var(--text-secondary); }
+  .q .stem {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  .q .stem::before {
+    content: counter(q) ". ";
+    color: var(--brand);
+    font-family: var(--font-mono);
+  }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .opt:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-strong);
+  }
+  .opt.selected {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand);
+    font-weight: 600;
+  }
+  .opt.correct {
+    background: var(--ok-soft) !important;
+    border-color: var(--ok) !important;
+    color: var(--ok) !important;
+    font-weight: 600;
+  }
+  .opt.wrong {
+    background: var(--bad-soft) !important;
+    border-color: var(--bad) !important;
+    color: var(--bad) !important;
+    font-weight: 600;
+  }
+  .opt-shortcut {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .opt.selected .opt-shortcut {
+    background: var(--brand);
+    color: #fff;
+    border-color: var(--brand);
+  }
+  .opt-text { flex: 1; font-size: 14px; }
+
+  .explain {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg-surface-elevated);
+    border-left: 3px solid var(--brand);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+  .yourans {
+    font-size: 13px;
+    margin-top: 8px;
+    color: var(--text-secondary);
+  }
+
+  .exam-toolbar {
+    position: sticky;
+    top: 61px;
+    z-index: 40;
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    box-shadow: var(--card-shadow);
+  }
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-hover);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--brand-gradient);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .pill {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .pill.normal { background: var(--ok-soft); color: var(--ok); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .pill.wrongbook { background: var(--bad-soft); color: var(--bad); border: 1px solid rgba(244, 63, 94, 0.3); }
+  .pill.pending { background: var(--warn-soft); color: var(--warn); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+  /* 模态框 */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+  .modal-dialog {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 420px;
+    padding: 24px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .modal-close:hover { color: var(--text-primary); }
+
+  /* 表单控件 */
+  label.fld {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 14px 0 6px;
+    font-weight: 500;
+  }
+  input[type=text], input[type=password], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  input[type=text]:focus, input[type=password]:focus, select:focus {
+    border-color: var(--brand);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 120;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .loading { text-align: center; padding: 48px 20px; color: var(--text-secondary); }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-subtle);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .score-hero { text-align: center; padding: 30px 20px; }
+  .score-big {
+    font-size: 56px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    letter-spacing: -0.04em;
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+
+  .muted { color: var(--text-muted); font-size: 13px; }
+  .hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+  details.card summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 600;
+    outline: none;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  details.card summary::-webkit-details-marker { display: none; }
+
+  /* 功能开发中占位卡片 */
+  .coming-soon-card {
+    text-align: center;
+    padding: 60px 24px;
+    border: 1px dashed var(--border-strong);
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+  }
+  .coming-soon-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: inline-block;
+    animation: float 2.5s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* 题库分类过滤标签 */
+  .category-filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .cat-filter-chip {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .cat-filter-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .cat-filter-chip.active {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand);
+    font-weight: 600;
+  }
 </style>
 </head>
 <body>
+
 <header>
-  <h1>前端面试刷题器 🦉</h1>
+  <div class="brand-group" id="brandLogo">
+    <!-- EasyOffer 专属矢量 LOGO: 极速 E + Offer 勾号 -->
+    <svg class="brand-logo-svg" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="eoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4f46e5"/>
+          <stop offset="50%" stop-color="#06b6d4"/>
+          <stop offset="100%" stop-color="#10b981"/>
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" rx="26" fill="url(#eoGrad)"/>
+      <path d="M24 36 L50 36 M24 50 L42 50 M24 64 L50 64" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M46 54 L60 68 L82 32" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div class="brand-text">
+      <h1>
+        <span id="txtBrandTitle">EasyOffer</span>
+      </h1>
+      <div class="sub" id="txtBrandSub">Next-Gen Technical Interview & Practice Arena</div>
+    </div>
+  </div>
+
   <nav id="nav">
-    <button data-view="sim" class="active">面试模拟</button>
-    <button data-view="bank">题库</button>
-    <button data-view="wrong">错题本</button>
-    <button data-view="settings">设置/AI</button>
+    <button data-view="sim" class="active"><span class="icon">🎯</span><span data-i18n="navSim">面试模拟</span></button>
+    <button data-view="bank"><span class="icon">📚</span><span data-i18n="navBank">本地题库</span></button>
+    <button data-view="wrong"><span class="icon">💡</span><span data-i18n="navWrong">错题本</span></button>
+    <button data-view="settings"><span class="icon">⚙️</span><span data-i18n="navSettings">设置 / AI</span></button>
   </nav>
+
+  <div class="header-actions">
+    <!-- 主题切换按钮 (浅色 / 深色) -->
+    <button class="action-btn" id="themeSwitchBtn" title="切换深色/浅色模式">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">深色</span>
+    </button>
+    <!-- 语言切换按钮 (中 / EN) -->
+    <button class="action-btn" id="langSwitch" title="Switch Language / 切换语言">
+      <span class="icon">🌐</span>
+      <span id="langLabel">English</span>
+    </button>
+  </div>
 </header>
-<div class="wrap" id="app"></div>
+
+<div class="app-container">
+  <!-- 最左侧侧边栏：岗位角色 -->
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-section-title" data-i18n="sidebarRoleTitle">🎯 岗位专业方向</div>
+      <div class="role-list" id="roleList">
+        <div class="role-item active" data-role="frontend">
+          <div class="role-label">
+            <span>💻</span>
+            <span data-i18n="roleFrontend">Web 前端开发</span>
+          </div>
+          <span class="role-tag active" data-i18n="tagActive">生效中</span>
+        </div>
+        <div class="role-item" data-role="python">
+          <div class="role-label">
+            <span>🐍</span>
+            <span data-i18n="rolePython">Python 全栈开发</span>
+          </div>
+          <span class="role-tag dev" data-i18n="tagInDev">开发中</span>
+        </div>
+        <div class="role-item" data-role="ai_agent">
+          <div class="role-label">
+            <span>🤖</span>
+            <span data-i18n="roleAI">AI 应用开发 / Agent</span>
+          </div>
+          <span class="role-tag dev" data-i18n="tagInDev">开发中</span>
+        </div>
+        <div class="role-item" data-role="java">
+          <div class="role-label">
+            <span>☕</span>
+            <span data-i18n="roleJava">Java 后端架构</span>
+          </div>
+          <span class="role-tag dev" data-i18n="tagInDev">开发中</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding:12px;background:var(--bg-surface-elevated);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted)">
+      ⚡ <b>EasyOffer</b> <br>
+      <span data-i18n="sidebarTip">纯本地轻量架构，题目由你私有 AI 生成沉淀。</span>
+    </div>
+  </aside>
+
+  <!-- 主内容区 -->
+  <main class="main-content" id="app"></main>
+</div>
+
+<!-- 确认删除弹窗 -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal-dialog">
+    <div class="modal-title">
+      <span data-i18n="confirmDelTitle">确认删除练习组</span>
+      <button class="modal-close" id="closeConfirmModal">✕</button>
+    </div>
+    <p class="muted" id="confirmModalText" style="margin:12px 0 20px">确定要删除该练习组吗？删除后该组作答记录不可恢复。</p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn soft sm" id="cancelDelBtn" data-i18n="btnCancel">取消</button>
+      <button class="btn danger sm" id="doDelBtn" data-i18n="btnConfirmDelete">确认删除</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 "use strict";
 
-/* 全局错误兜底：避免白屏，把错误显示到页面上 */
-window.addEventListener('error', function(e){
-  var d=document.getElementById('app');
-  if(d){
-    d.innerHTML = '<div class="card" style="border-color:#fecaca">'
-      + '<h3 style="margin-top:0;color:#dc2626">⚠️ 页面运行出错</h3>'
-      + '<pre style="white-space:pre-wrap;font-size:13px;color:#334155;margin:0">'
-      + String(e.message||(e.error&&e.error.message)||'未知错误')
-      + '\n\n位置：'+(e.filename||'')+':'+(e.lineno||'')
-      + '</pre>'
-      + '<p class="muted" style="margin-top:10px">若提示 CORS / 网络 / fetch 相关错误，多半是双击(file://)打开导致的跨域限制。请在该文件所在目录运行 <code>node server.js</code>，再访问 <code>http://localhost:8080/</code>。</p>'
-      + '</div>';
+/* ==========================================================================
+   1. 统一标准分类 (与首页排除按钮保持完全一致 + 题库多一个“其他”)
+   ========================================================================== */
+const STANDARD_CATEGORIES = [
+  'JavaScript',
+  'Vue3',
+  'Vue2',
+  'React',
+  'TypeScript',
+  'HTML/CSS',
+  'Webpack',
+  'ECharts',
+  'Node.js',
+  '算法与优化'
+];
+
+function normalizeCategoryName(rawCat) {
+  const c = String(rawCat || '').trim();
+  const lower = c.toLowerCase();
+  if (lower === 'js' || lower === 'javascript') return 'JavaScript';
+  if (lower === 'vue3') return 'Vue3';
+  if (lower === 'vue2') return 'Vue2';
+  if (lower === 'react') return 'React';
+  if (lower === 'ts' || lower === 'typescript') return 'TypeScript';
+  if (lower === 'html' || lower === 'css' || lower === 'html/css') return 'HTML/CSS';
+  if (lower === 'webpack' || lower === 'vite' || lower.includes('工程化') || lower.includes('封装')) return 'Webpack';
+  if (lower.includes('echarts') || lower.includes('图表') || lower.includes('可视化')) return 'ECharts';
+  if (lower === 'node' || lower === 'node.js') return 'Node.js';
+  if (lower.includes('算法') || lower.includes('优化')) return '算法与优化';
+  return '其他';
+}
+
+/* ==========================================================================
+   2. 国际化 (i18n) 字典系统 - 项目名统一为 EasyOffer
+   ========================================================================== */
+const I18N = {
+  'zh-CN': {
+    brandTitle: 'EasyOffer',
+    brandSub: 'Next-Gen Technical Interview & Practice Arena',
+    sidebarRoleTitle: '🎯 岗位专业方向',
+    roleFrontend: 'Web 前端开发',
+    rolePython: 'Python 全栈开发',
+    roleAI: 'AI 应用开发 / Agent',
+    roleJava: 'Java 后端架构',
+    tagActive: '生效中',
+    tagInDev: '研发中',
+    sidebarTip: '纯本地轻量架构，题目由你私有 AI 生成沉淀。',
+    navSim: '面试模拟',
+    navBank: '本地题库',
+    navWrong: '错题本',
+    navSettings: '设置 / AI',
+    langSwitchLabel: 'English',
+    themeLightLabel: '浅色',
+    themeDarkLabel: '深色',
+    simTitle: '面试模拟',
+    simDesc: '每轮 = 40 单选 + 10 多选 + 10 判断 = 60 题。进度自动保存，支持键盘快捷键作答。',
+    btnGenNew: '生成新一轮',
+    btnSampleBank: '从题库随机抽一组',
+    statLocalBank: '本地题库总量',
+    statWrongBook: '待巩固错题',
+    statRoundsCount: '已生成练习组',
+    scopeTitle: '题目范围与排除项（排除法）',
+    scopeSubtitle: '默认覆盖前端全部知识点。点击或输入即可排除特定模块（如 Vue3、ECharts）：',
+    addExclusionPlaceholder: '输入排除项，例如：Vue3、ECharts、Webpack，按回车添加...',
+    btnAddExclusion: '+ 排除',
+    clearExclusions: '清空全部排除',
+    noExclusionsActive: '当前未设置排除项（覆盖全部技术栈）',
+    practiceSetsTitle: '我的练习组',
+    practiceSetsEmpty: '还没有练习组，点击上方「生成新一轮」使用 AI 生成你的第一套题吧！',
+    pagePrev: '上一页',
+    pageNext: '下一页',
+    pageInfo: '第 {current} / {total} 页 (共 {count} 组)',
+    roundNotAnswered: '未作答',
+    roundGenerating: 'AI 题目生成中…',
+    roundDone: '已交卷 · {pct}%',
+    roundCorrectStats: '正确 {correct} / 错误 {wrong} · 得分率 {pct}%',
+    btnDelete: '删除',
+    confirmDelTitle: '删除练习组',
+    confirmDelMsg: '确定要删除「{name}」吗？作答记录将被移除。',
+    btnCancel: '取消',
+    btnConfirmDelete: '确认删除',
+    examTitle: '模拟考场',
+    examExit: '← 返回列表',
+    examProgress: '已答 {answered} / {total} 题',
+    examShortcuts: '⌨️ 快捷键：数字 1-4 或 A-D 选择选项 ｜ Ctrl + Enter 交卷',
+    btnSubmitExam: '完成交卷',
+    resultTitle: '答题报告',
+    btnRetryExam: '重新答题',
+    btnToWrong: '查看错题本',
+    btnBackList: '返回列表',
+    scoreRate: '得分率',
+    labelYourAns: '你的选择',
+    labelCorrectAns: '正确答案',
+    labelExplanation: '考点精讲',
+    ansCorrectPill: '答对',
+    ansWrongPill: '答错',
+    bankTitle: '本地题库检索',
+    bankDesc: '已在本地沉淀 {count} 道题目。支持按分类与多维度模糊搜索，题目与解析均存在你的本机。',
+    searchBankPlaceholder: '多维度搜索：题干、分类、单选/多选/判断、日期、解析关键词...',
+    wrongTitle: '智能错题本',
+    wrongDesc: '已自动归集 {count} 道错题（每页展示 20 道）。连续答对 2 次将自动毕业移出。',
+    wrongEmpty: '错题本空空如也！去多做几轮常规练习吧，做错的题目会自动沉淀在这里。',
+    btnStartWrongPractice: '💡 开始错题专项突破',
+    wrongStatsMeta: '做错 {count} 次 · 最近记录 {time} · 连续答对 {streak}/2',
+    wrongPageInfo: '第 {current} / {total} 页 (共 {count} 道待巩固错题)',
+    settingsTitle: '系统设置与 AI 出题引擎',
+    setProviderLabel: '① 出题大模型服务商',
+    setModelLabel: '② 选择模型',
+    setKeyLabel: '③ API Key（仅存本机 data.json，安全不上传）',
+    setBaseUrlLabel: '④ 自定义接口地址 (chat/completions)',
+    btnSaveSettings: '保存设置',
+    btnTestSettings: '测试连接',
+    btnResetSettings: '恢复默认设置',
+    toastDeleted: '练习组已删除',
+    toastExclusionAdded: '已添加排除项：{name}',
+    toastExclusionCleared: '已清空排除项',
+    toastSettingsSaved: '设置已保存',
+    toastSettingsTestedOk: 'AI 连接测试成功！',
+    toastSettingsTestedErr: 'AI 连接失败：',
+    comingSoonTitle: '【{role}】题库研发中',
+    comingSoonDesc: '该专业方向的大模型出题适配正在研发校对中，涵盖实战核心真题。敬请期待！',
+    btnBackToFrontend: '返回前端刷题',
+    allCategory: '全部'
+  },
+  'en-US': {
+    brandTitle: 'EasyOffer',
+    brandSub: 'Next-Gen Technical Interview & Practice Arena',
+    sidebarRoleTitle: '🎯 Track & Position',
+    roleFrontend: 'Frontend Engineering',
+    rolePython: 'Python Development',
+    roleAI: 'AI Agent & Engineering',
+    roleJava: 'Java Backend Systems',
+    tagActive: 'Active',
+    tagInDev: 'In Dev',
+    sidebarTip: 'Lightweight local-first architecture. Questions generated & stored locally.',
+    navSim: 'Mock Interview',
+    navBank: 'Question Bank',
+    navWrong: 'Mistake Book',
+    navSettings: 'Settings / AI',
+    langSwitchLabel: '简体中文',
+    themeLightLabel: 'Light',
+    themeDarkLabel: 'Dark',
+    simTitle: 'Interview Simulation',
+    simDesc: 'Each session = 40 Single + 10 Multiple + 10 Boolean = 60 Qs. Progress is auto-saved. Keyboard shortcuts supported.',
+    btnGenNew: 'Generate New Round',
+    btnSampleBank: 'Sample from Bank',
+    statLocalBank: 'Local Question Bank',
+    statWrongBook: 'Pending Mistakes',
+    statRoundsCount: 'Practice Sets',
+    scopeTitle: 'Question Scope & Exclusions (Negative Filter)',
+    scopeSubtitle: 'Default covers full frontend stack. Click or input keywords to exclude (e.g., Vue3, ECharts):',
+    addExclusionPlaceholder: 'Type keyword to exclude (e.g. Vue3, ECharts) & press Enter...',
+    btnAddExclusion: '+ Exclude',
+    clearExclusions: 'Clear All',
+    noExclusionsActive: 'No exclusions active (All topics included)',
+    practiceSetsTitle: 'My Practice Sets',
+    practiceSetsEmpty: 'No practice sets yet. Click "Generate New Round" above to create your first set!',
+    pagePrev: 'Prev',
+    pageNext: 'Next',
+    pageInfo: 'Page {current} of {total} ({count} sets total)',
+    roundNotAnswered: 'Unanswered',
+    roundGenerating: 'Generating Qs…',
+    roundDone: 'Submitted · {pct}%',
+    roundCorrectStats: '{correct} Correct / {wrong} Wrong · Accuracy {pct}%',
+    btnDelete: 'Delete',
+    confirmDelTitle: 'Delete Practice Set',
+    confirmDelMsg: 'Are you sure you want to delete "{name}"? Your answer records will be removed.',
+    btnCancel: 'Cancel',
+    btnConfirmDelete: 'Confirm Delete',
+    examTitle: 'Mock Exam',
+    examExit: '← Back to List',
+    examProgress: 'Answered {answered} / {total}',
+    examShortcuts: '⌨️ Shortcuts: Press 1-4 or A-D to select ｜ Ctrl + Enter to submit',
+    btnSubmitExam: 'Submit Answers',
+    resultTitle: 'Performance Report',
+    btnRetryExam: 'Retake Exam',
+    btnToWrong: 'Review Mistakes',
+    btnBackList: 'Back to List',
+    scoreRate: 'Score Rate',
+    labelYourAns: 'Your Choice',
+    labelCorrectAns: 'Correct Answer',
+    labelExplanation: 'Key Explanation',
+    ansCorrectPill: 'Correct',
+    ansWrongPill: 'Wrong',
+    bankTitle: 'Local Question Repository',
+    bankDesc: '{count} questions stored locally. Multi-dimensional search supported.',
+    searchBankPlaceholder: 'Search question, category, type, date, explanation...',
+    wrongTitle: 'Smart Mistake Book',
+    wrongDesc: '{count} mistaken questions recorded (20 per page). Answer correctly twice to graduate.',
+    wrongEmpty: 'Mistake book is completely clean! Keep practicing; mistakes will be captured here automatically.',
+    btnStartWrongPractice: '💡 Start Mistake Drill',
+    wrongStatsMeta: 'Wrong {count} times · Last {time} · Streak {streak}/2',
+    wrongPageInfo: 'Page {current} of {total} ({count} questions total)',
+    settingsTitle: 'Settings & AI Generation Engine',
+    setProviderLabel: '① AI Provider',
+    setModelLabel: '② Select Model',
+    setKeyLabel: '③ API Key (Stored locally in data.json, never leaked)',
+    setBaseUrlLabel: '④ Custom Endpoint (chat/completions)',
+    btnSaveSettings: 'Save Settings',
+    btnTestSettings: 'Test Connection',
+    btnResetSettings: 'Reset to Defaults',
+    toastDeleted: 'Practice set deleted',
+    toastExclusionAdded: 'Excluded: {name}',
+    toastExclusionCleared: 'All exclusions cleared',
+    toastSettingsSaved: 'Settings saved',
+    toastSettingsTestedOk: 'AI connection successful!',
+    toastSettingsTestedErr: 'AI connection failed: ',
+    comingSoonTitle: '【{role}】Bank Under Development',
+    comingSoonDesc: 'Curated questions and prompts for this track are currently under development. Stay tuned!',
+    btnBackToFrontend: 'Back to Frontend Practice',
+    allCategory: 'All'
   }
-});
+};
 
-/* ============ 本地存储 ============ */
-const LS = { bank:'feiq_bank', rounds:'feiq_rounds', wrong:'feiq_wrong', settings:'feiq_settings', proxyKey:'feiq_proxy_key' };
-const TYPES = ['single','multiple','boolean'];
-const CATS = ['JS','Vue2','Vue3','HTML','CSS','封装','优化'];
+let currentLang = localStorage.getItem('easyoffer_lang') || 'zh-CN';
+if (!I18N[currentLang]) currentLang = 'zh-CN';
 
-function loadLS(key, def){ try{ return JSON.parse(localStorage.getItem(key)) ?? def; }catch(e){ return def; } }
+function t(key, params) {
+  const dict = I18N[currentLang] || I18N['zh-CN'];
+  let str = dict[key] || I18N['zh-CN'][key] || key;
+  if (params && typeof params === 'object') {
+    for (const k in params) {
+      str = str.replace(new RegExp('\\{' + k + '\\}', 'g'), params[k]);
+    }
+  }
+  return str;
+}
 
-/* ============ 数据层：内存 DB + 自动同步 ============
- * 优先连接本地 Node 服务(/api/data)，自动把数据落盘到同目录 data.json；
- * 若未启动服务(直接双击 file:// 打开)，则回退到浏览器 localStorage，并仍可手动导出。
- * 这样无论哪种打开方式都不会崩，且启动服务后数据真正持久化到实体文件。 */
-const DB = { feiq_bank:[], feiq_rounds:[], feiq_wrong:{}, feiq_settings:{}, feiq_proxyKey:'' };
+function updateI18nStaticText() {
+  document.getElementById('txtBrandTitle').textContent = t('brandTitle');
+  document.getElementById('txtBrandSub').textContent = t('brandSub');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (k) el.textContent = t(k);
+  });
+  document.getElementById('langLabel').textContent = t('langSwitchLabel');
+  updateThemeButtonUI();
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'zh-CN' ? 'en-US' : 'zh-CN';
+  localStorage.setItem('easyoffer_lang', currentLang);
+  updateI18nStaticText();
+  render();
+  toast(currentLang === 'zh-CN' ? '已切换至 简体中文' : 'Switched to English');
+}
+
+/* ==========================================================================
+   3. 主题管理 (Theme Manager: Light / Dark)
+   ========================================================================== */
+let currentTheme = localStorage.getItem('easyoffer_theme_v2');
+if (!currentTheme) {
+  currentTheme = 'light';
+  localStorage.setItem('easyoffer_theme_v2', 'light');
+  localStorage.setItem('easyoffer_theme', 'light');
+}
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('easyoffer_theme_v2', theme);
+  localStorage.setItem('easyoffer_theme', theme);
+  updateThemeButtonUI();
+}
+
+function updateThemeButtonUI() {
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if (currentTheme === 'dark') {
+    icon.textContent = '☀️';
+    label.textContent = t('themeLightLabel');
+  } else {
+    icon.textContent = '🌙';
+    label.textContent = t('themeDarkLabel');
+  }
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+/* ==========================================================================
+   4. 岗位角色配置
+   ========================================================================== */
+const ROLES = [
+  {
+    id: 'frontend',
+    nameZh: 'Web 前端开发',
+    nameEn: 'Frontend Engineering',
+    active: true
+  },
+  {
+    id: 'python',
+    nameZh: 'Python 全栈开发',
+    nameEn: 'Python Development',
+    active: false,
+    descZh: '全面涵盖 Python 核心语法、FastAPI / Django 异步高并发、PyTorch 深度学习实战与自动化工程。',
+    descEn: 'Covers Python Core, FastAPI, PyTorch, Data Science, and Async Microservices.'
+  },
+  {
+    id: 'ai_agent',
+    nameZh: 'AI 应用开发 / Agent',
+    nameEn: 'AI Agent & Engineering',
+    active: false,
+    descZh: '涵盖大模型 Prompt 工程、LangChain / LlamaIndex 智能体架构、RAG 检索增强技术与向量数据库。',
+    descEn: 'Covers LLM Prompt Engineering, LangChain / LlamaIndex Agents, RAG pipelines, and Vector DBs.'
+  },
+  {
+    id: 'java',
+    nameZh: 'Java 后端架构',
+    nameEn: 'Java Backend Systems',
+    active: false,
+    descZh: '涵盖 JVM 底层优化、Spring Boot / Cloud 微服务体系、MySQL 锁与索引、Redis 分布式缓存与并发编程。',
+    descEn: 'Covers JVM internals, Spring Boot, MySQL indexing, Redis caching, and High Concurrency.'
+  }
+];
+
+let selectedRoleId = 'frontend';
+
+/* ==========================================================================
+   5. 数据层与本地持久化 (纯本地轻量架构)
+   ========================================================================== */
+const LS = {
+  bank: 'feiq_bank',
+  rounds: 'feiq_rounds',
+  wrong: 'feiq_wrong',
+  settings: 'feiq_settings'
+};
+
+const DB = {
+  feiq_bank: [],
+  feiq_rounds: [],
+  feiq_wrong: {},
+  feiq_settings: {
+    provider: 'pollinations',
+    exclusions: []
+  }
+};
+
 let USE_SERVER = false;
 let _syncTimer = null;
 
-async function bootstrap(){
-  try{
-    const r = await fetch('/api/data', { cache:'no-store' });
-    if (r.ok){
+function loadLS(key, def) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? def; }
+  catch(e) { return def; }
+}
+
+async function bootstrap() {
+  try {
+    const r = await fetch('/api/data', { cache: 'no-store' });
+    if (r.ok) {
       const d = await r.json();
       DB[LS.bank] = Array.isArray(d.bank) ? d.bank : [];
       DB[LS.rounds] = Array.isArray(d.rounds) ? d.rounds : [];
-      DB[LS.wrong] = (d.wrong && typeof d.wrong==='object') ? d.wrong : {};
-      DB[LS.settings] = (d.settings && typeof d.settings==='object') ? d.settings : {};
-      DB[LS.proxyKey] = typeof d.proxyKey==='string' ? d.proxyKey : '';
+      DB[LS.wrong] = (d.wrong && typeof d.wrong === 'object') ? d.wrong : {};
+      DB[LS.settings] = (d.settings && typeof d.settings === 'object') ? d.settings : {};
       USE_SERVER = true;
-      // 同时镜像到 localStorage，作为离线/二次备份
-      try{ localStorage.setItem(LS.bank, JSON.stringify(DB[LS.bank])); localStorage.setItem(LS.rounds, JSON.stringify(DB[LS.rounds])); localStorage.setItem(LS.wrong, JSON.stringify(DB[LS.wrong])); localStorage.setItem(LS.settings, JSON.stringify(DB[LS.settings])); localStorage.setItem(LS.proxyKey, DB[LS.proxyKey]); }catch(e){}
+      try {
+        localStorage.setItem(LS.bank, JSON.stringify(DB[LS.bank]));
+        localStorage.setItem(LS.rounds, JSON.stringify(DB[LS.rounds]));
+        localStorage.setItem(LS.wrong, JSON.stringify(DB[LS.wrong]));
+        localStorage.setItem(LS.settings, JSON.stringify(DB[LS.settings]));
+      } catch(e) {}
       return;
     }
-  }catch(e){ /* 未启动服务，走回退分支 */ }
+  } catch(e) {}
+
   DB[LS.bank] = loadLS(LS.bank, []);
   DB[LS.rounds] = loadLS(LS.rounds, []);
   DB[LS.wrong] = loadLS(LS.wrong, {});
-  DB[LS.settings] = loadLS(LS.settings, {});
-  DB[LS.proxyKey] = loadLS(LS.proxyKey, '');
+  DB[LS.settings] = loadLS(LS.settings, { provider: 'pollinations', exclusions: [] });
   USE_SERVER = false;
 }
 
-function load(key, def){ const v = DB[key]; return (v===undefined || v===null) ? def : v; }
-function scheduleSync(){
-  if (_syncTimer) clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(doSync, 250);
+function load(key, def) {
+  const v = DB[key];
+  return (v === undefined || v === null) ? def : v;
 }
-async function doSync(){
-  if (USE_SERVER){
-    try{
-      await fetch('/api/data', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ bank:DB[LS.bank], rounds:DB[LS.rounds], wrong:DB[LS.wrong], settings:DB[LS.settings], proxyKey:DB[LS.proxyKey] }) });
-    }catch(e){ console.warn('同步到后端失败（数据仍在内存，下次变更会重试）：', e); }
+
+function scheduleSync() {
+  if (_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(doSync, 200);
+}
+
+async function doSync() {
+  if (USE_SERVER) {
+    try {
+      await fetch('/api/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bank: DB[LS.bank],
+          rounds: DB[LS.rounds],
+          wrong: DB[LS.wrong],
+          settings: DB[LS.settings]
+        })
+      });
+    } catch(e) {
+      console.warn('Sync failed:', e);
+    }
   } else {
-    try{ localStorage.setItem(LS.bank, JSON.stringify(DB[LS.bank])); localStorage.setItem(LS.rounds, JSON.stringify(DB[LS.rounds])); localStorage.setItem(LS.wrong, JSON.stringify(DB[LS.wrong])); localStorage.setItem(LS.settings, JSON.stringify(DB[LS.settings])); localStorage.setItem(LS.proxyKey, DB[LS.proxyKey]); }catch(e){}
+    try {
+      localStorage.setItem(LS.bank, JSON.stringify(DB[LS.bank]));
+      localStorage.setItem(LS.rounds, JSON.stringify(DB[LS.rounds]));
+      localStorage.setItem(LS.wrong, JSON.stringify(DB[LS.wrong]));
+      localStorage.setItem(LS.settings, JSON.stringify(DB[LS.settings]));
+    } catch(e) {}
   }
 }
-function save(key, val){ DB[key] = val; scheduleSync(); }
-function getBank(){ return load(LS.bank, []); }
-function saveBank(b){ save(LS.bank, b); }
-function getRounds(){ return load(LS.rounds, []); }
-function getWrong(){ return load(LS.wrong, {}); }
-function getSettings(){
-  const s = load(LS.settings, {}) || {};
-  const provider = normalizeProvider(s.provider);           // 旧版 provider='proxy' 自动迁移
-  const apiKeys = Object.assign({}, (s.apiKeys && typeof s.apiKeys === 'object') ? s.apiKeys : {});
-  if (s.apiKey && !apiKeys[provider]) apiKeys[provider] = s.apiKey;  // 兼容旧版单一 apiKey 字段
-  return Object.assign({ provider:'local', model:'', apiKey:'', baseUrl:'' }, s, { provider, apiKeys });
+
+function save(key, val) {
+  DB[key] = val;
+  scheduleSync();
 }
 
-/* ============ 内置兜底题库（首次运行注入，之后由 AI 不断充盈） ============ */
-const BUILTIN = [
-  // ---- JS 单选 15 ----
-  {type:'single',category:'JS',question:'以下哪个不是 JavaScript 的原始（基本）类型？',options:['String','Number','Boolean','Object'],answer:3,explanation:'Object 是引用类型；原始类型包括 String/Number/Boolean/Null/Undefined/Symbol/BigInt。'},
-  {type:'single',category:'JS',question:'关于 == 和 ===，下列说法正确的是？',options:['== 只比较值，=== 同时比较值和类型','== 比较类型，=== 比较值','两者完全一样','== 用于数字，=== 用于字符串'],answer:0,explanation:'== 会做类型转换后比较值；=== 严格比较，值和类型都要相等。'},
-  {type:'single',category:'JS',question:'下列表达式结果为 true 的是？',options:['0 === false','0 == false','null === undefined','NaN === NaN'],answer:1,explanation:'== 会做隐式转换，0 与 false 都转为 0，故相等；其余均为 false。'},
-  {type:'single',category:'JS',question:'关于 var / let / const，下列说法错误的是？',options:['let 具有块级作用域','const 声明后不能再重新赋值','var 存在变量提升','const 声明的对象不能修改其内部属性'],answer:3,explanation:'const 只是绑定不可重新赋值，对象内部属性仍可修改。'},
-  {type:'single',category:'JS',question:'setTimeout 的回调属于？',options:['宏任务','微任务','同步任务','渲染任务'],answer:0,explanation:'setTimeout/setInterval 属于宏任务；Promise.then 等属于微任务。'},
-  {type:'single',category:'JS',question:'Promise 的三种状态不包括？',options:['pending','fulfilled','rejected','completed'],answer:3,explanation:'Promise 状态为 pending / fulfilled / rejected，没有 completed。'},
-  {type:'single',category:'JS',question:'以下哪个数组方法会返回一个新数组？',options:['push','splice','map','sort'],answer:2,explanation:'map/filter 等返回新数组；push/splice/sort 会修改原数组。'},
-  {type:'single',category:'JS',question:'用于把嵌套数组“拍平”的方法是？',options:['flat','concat','join','slice'],answer:0,explanation:'Array.prototype.flat() 可按层级扁平化数组。'},
-  {type:'single',category:'JS',question:'typeof null 的结果是？',options:['null','object','undefined','number'],answer:1,explanation:'这是 JS 的历史遗留 bug，typeof null 返回 "object"。'},
-  {type:'single',category:'JS',question:'闭包指的是？',options:['函数可以访问其定义时所在作用域的变量','函数必须有返回值','两个函数嵌套','一定是箭头函数'],answer:0,explanation:'闭包是函数与其词法作用域的组合，使内部函数能访问外部变量。'},
-  {type:'single',category:'JS',question:'ES6 中 JavaScript 的基本数据类型共有几个？',options:['5','6','7','8'],answer:2,explanation:'共 7 个：string/number/boolean/null/undefined/symbol/bigint。'},
-  {type:'single',category:'JS',question:'非严格模式下，普通函数独立调用时 this 指向？',options:['调用者','window（非严格）','undefined','函数自身'],answer:1,explanation:'非严格模式普通调用 this 指向全局对象 window；严格模式为 undefined。'},
-  {type:'single',category:'JS',question:'let a=1; function f(){ console.log(a); let a=2; } f(); 会？',options:['输出 1','输出 2','报错（暂时性死区）','输出 undefined'],answer:2,explanation:'函数内 let a 形成块级作用域并存在 TDZ，访问早于声明会报错。'},
-  {type:'single',category:'JS',question:'对于仅包含数据的对象，可用于深拷贝的方式是？',options:['JSON.parse(JSON.stringify(obj))','Object.assign({}) 是深拷贝','直接 = 赋值','展开运算符对嵌套对象是深拷贝'],answer:0,explanation:'JSON 方式能深拷贝纯数据；Object.assign 与展开仅浅拷贝。'},
-  {type:'single',category:'JS',question:'Array.isArray([]) 的结果是？',options:['true','false','undefined','报错'],answer:0,explanation:'Array.isArray 用于判断是否为数组，返回 true。'},
-  // ---- Vue2 单选 10 ----
-  {type:'single',category:'Vue2',question:'Vue2 的响应式原理基于？',options:['Object.defineProperty','Proxy','Reflect','自动 getter/setter'],answer:0,explanation:'Vue2 通过 Object.defineProperty 劫持属性的 get/set 实现响应式。'},
-  {type:'single',category:'Vue2',question:'v-if 与 v-show 的区别是？',options:['v-if 是条件渲染（销毁/重建），v-show 是切换 display','两者完全一样','v-show 更耗性能','v-if 只能用于表单'],answer:0,explanation:'v-if 真正增删 DOM；v-show 仅用 CSS 隐藏，适合频繁切换。'},
-  {type:'single',category:'Vue2',question:'computed 与 watch 的主要区别？',options:['computed 有缓存、依赖变化才重算；watch 监听变化执行回调','两者一样','watch 有缓存','computed 只能异步'],answer:0,explanation:'computed 是计算属性带缓存；watch 是侦听数据变化做副作用。'},
-  {type:'single',category:'Vue2',question:'父子组件通信中，子组件向父组件传值用？',options:['props','$emit','v-model','provide/inject'],answer:1,explanation:'子组件通过 this.$emit("事件名", 数据) 通知父组件。'},
-  {type:'single',category:'Vue2',question:'v-for 中建议写 key 的主要原因是？',options:['帮助 Vue 高效 diff 虚拟 DOM、避免状态错乱','不写会报错','为了加样式','没有实际作用'],answer:0,explanation:'key 作为节点唯一标识，提升列表更新效率并避免复用错乱。'},
-  {type:'single',category:'Vue2',question:'Vue2 生命周期中“实例已创建、尚未挂载”的是？',options:['created','beforeMount','mounted','beforeCreate'],answer:1,explanation:'beforeMount 在挂载开始前触发；created 时数据已初始化但 DOM 未生成。'},
-  {type:'single',category:'Vue2',question:'this.$nextTick 的作用是？',options:['DOM 更新循环结束后再执行回调','立即同步执行','延时 1 秒','强制刷新页面'],answer:0,explanation:'数据变化后 DOM 异步更新，$nextTick 在更新完成后回调。'},
-  {type:'single',category:'Vue2',question:'关于组件的 data，正确的是？',options:['组件中的 data 必须是函数','data 必须是对象','data 不能是函数','data 只能是字符串'],answer:0,explanation:'组件 data 必须是函数，保证每个实例有独立的数据副本。'},
-  {type:'single',category:'Vue2',question:'Vue2 中直接 this.arr[0]=1 能触发视图更新吗？',options:['不能，需用 Vue.set 或 splice','能','自动响应','不会，但也不报错'],answer:0,explanation:'数组下标赋值无法被劫持，应使用 Vue.set 或变异方法（如 splice）。'},
-  {type:'single',category:'Vue2',question:'实现表单双向绑定的指令是？',options:['v-model','v-bind','v-on','v-if'],answer:0,explanation:'v-model 在表单元素上创建双向绑定。'},
-  // ---- Vue3 单选 8 ----
-  {type:'single',category:'Vue3',question:'Vue3 组合式 API 的核心是？',options:['setup / Composition API','Options API 已废弃','必须写 class','必须用 TypeScript'],answer:0,explanation:'组合式 API 以 setup 为中心组织逻辑，Options API 仍可继续使用。'},
-  {type:'single',category:'Vue3',question:'ref 与 reactive 的区别？',options:['ref 多用于基本类型（访问用 .value），reactive 用于对象','两者完全一样','reactive 用于基本类型','ref 不能用于对象'],answer:0,explanation:'ref 可包装任意类型（基本类型常用），reactive 只能代理对象。'},
-  {type:'single',category:'Vue3',question:'Vue3 的响应式系统基于？',options:['Proxy','Object.defineProperty','Object.freeze','普通 getter'],answer:0,explanation:'Vue3 用 Proxy 代理实现响应式，解决了 Vue2 的部分缺陷。'},
-  {type:'single',category:'Vue3',question:'在 <script setup> 中获取 props 用？',options:['defineProps','this.props','props()','getProps()'],answer:0,explanation:'defineProps 用于声明并接收父组件传入的 props。'},
-  {type:'single',category:'Vue3',question:'<script setup> 的作用是？',options:['编译时语法糖，简化组合式 API 写法','必须配合 render 函数','用来替代 template','是已废弃写法'],answer:0,explanation:'<script setup> 是组合式 API 的语法糖，减少样板代码。'},
-  {type:'single',category:'Vue3',question:'Vue3 中 Teleport 的作用是？',options:['把内容传送到指定的 DOM 节点（如 body）','实现路由跳转','做状态管理','实现动画'],answer:0,explanation:'Teleport 可将组件内部内容渲染到指定的外层节点，常用于弹窗。'},
-  {type:'single',category:'Vue3',question:'关于 reactive，下列说法错误的是？',options:['reactive 不能代理基本类型','reactive 返回响应式代理','可以随意解构而不丢失响应性','直接解构会丢失响应性'],answer:2,explanation:'解构 reactive 对象会丢失响应性，应使用 toRefs 保持。'},
-  {type:'single',category:'Vue3',question:'Vue3 生命周期 onMounted 对应 Vue2 的？',options:['mounted','created','beforeMount','destroyed'],answer:0,explanation:'onMounted 在组件挂载完成后触发，对应 Vue2 的 mounted。'},
-  // ---- HTML 单选 9 ----
-  {type:'single',category:'HTML',question:'下列属于 HTML5 语义化标签的是？',options:['<header> <article> <section>','<div>','<span>','<table>'],answer:0,explanation:'header/article/section/nav/footer 等是 HTML5 新增的语义化标签。'},
-  {type:'single',category:'HTML',question:'<!DOCTYPE html> 的作用是？',options:['声明文档类型、启用标准模式','引入 CSS 文件','定义页面标题','作为注释'],answer:0,explanation:'DOCTYPE 告知浏览器使用标准模式解析文档。'},
-  {type:'single',category:'HTML',question:'块级元素的特点是？',options:['独占一行、可设置宽高','不换行显示','不能设置宽高','只能放文本'],answer:0,explanation:'块级元素（如 div/p）默认独占一行，可设置宽高。'},
-  {type:'single',category:'HTML',question:'让输入框“必填”应使用的属性是？',options:['required','placeholder','value','name'],answer:0,explanation:'required 属性规定表单提交前该字段必须填写。'},
-  {type:'single',category:'HTML',question:'localStorage 与 sessionStorage 的区别是？',options:['localStorage 持久保存，sessionStorage 仅当前会话','两者完全一样','sessionStorage 永久保存','两者都不能存数据'],answer:0,explanation:'localStorage 关闭浏览器仍在；sessionStorage 随会话结束清除。'},
-  {type:'single',category:'HTML',question:'以下属于行内（内联）元素的是？',options:['<span>','<div>','<p>','<section>'],answer:0,explanation:'span/a/strong 等是行内元素，不独占一行。'},
-  {type:'single',category:'HTML',question:'用于创建表单的元素是？',options:['<form>','<input>','<button> 总是提交表单','<table>'],answer:0,explanation:'<form> 用于承载表单控件并提交数据。'},
-  {type:'single',category:'HTML',question:'<meta charset="UTF-8"> 的作用是？',options:['声明文档字符编码','设置页面标题','引入脚本','设置视口'],answer:0,explanation:'charset 告诉浏览器使用 UTF-8 解码页面，避免乱码。'},
-  {type:'single',category:'HTML',question:'引入外部 JavaScript 文件应使用？',options:['<script src="...">','<link>','<style>','<import>'],answer:0,explanation:'script 标签的 src 属性用于加载外部 JS。'},
-  // ---- CSS 单选 8 ----
-  {type:'single',category:'CSS',question:'在 content-box 盒模型下，width 包含？',options:['仅内容区，不含 padding 和 border','包含 padding','包含 border','包含 margin'],answer:0,explanation:'标准盒模型 width 只指内容区；border-box 才包含 padding/border。'},
-  {type:'single',category:'CSS',question:'让 flex 子项在容器中水平垂直居中可用？',options:['justify-content:center; align-items:center','text-align:center','margin:auto 一定生效','float 居中'],answer:0,explanation:'主轴与交叉轴都居中即可实现 flex 双居中。'},
-  {type:'single',category:'CSS',question:'position:absolute 相对谁定位？',options:['最近的非 static 定位祖先','永远相对 body','永远相对窗口','一定相对父元素'],answer:0,explanation:'绝对定位相对于最近的有定位的祖先；都没有则相对初始包含块。'},
-  {type:'single',category:'CSS',question:'以下哪种选择器优先级最高？',options:['!important','id 选择器','class 选择器','标签选择器'],answer:0,explanation:'!important 优先级高于普通声明；随后是内联 > id > class > 标签。'},
-  {type:'single',category:'CSS',question:'BFC（块级格式化上下文）的作用包括？',options:['隔离布局、防止外边距塌陷与清除浮动','设置文字颜色','实现动画','定义字体'],answer:0,explanation:'BFC 可阻断外边距合并、包含浮动元素等。'},
-  {type:'single',category:'CSS',question:'让定宽块级元素水平居中可用？',options:['margin: 0 auto','text-align:center','float:left','必须 position'],answer:0,explanation:'左右 margin 为 auto 可让定宽块级元素水平居中。'},
-  {type:'single',category:'CSS',question:'rem 单位相对于？',options:['根元素(html)的字体大小','父元素字体','自身字体','视口大小'],answer:0,explanation:'rem 基于 html 根元素的 font-size；em 基于父元素。'},
-  {type:'single',category:'CSS',question:'既能隐藏元素、又保留其原本占据的空间的是？',options:['visibility:hidden','display:none','都会清除空间','直接删除节点'],answer:0,explanation:'visibility:hidden 与 opacity:0 都保留空间；display:none 不保留。'},
-  // ---- 多选 5 ----
-  {type:'multiple',category:'JS',question:'以下属于 JavaScript 引用类型的有？',options:['Object','Array','null','Function'],answer:[0,1,3],explanation:'Object/Array/Function 是引用类型；null 是基本类型。'},
-  {type:'multiple',category:'Vue2',question:'在 Vue2 中，能触发视图更新的做法有？',options:['使用 Vue.set','使用数组的 splice 等变异方法','直接 this.arr[0]=1','调用 this.$forceUpdate()'],answer:[0,1,3],explanation:'Vue.set、变异方法、以及 $forceUpdate 都能触发更新；下标直接赋值不行。'},
-  {type:'multiple',category:'JS',question:'以下属于 ES6 新特性的有？',options:['let / const','箭头函数','Promise','var'],answer:[0,1,2],explanation:'let/const、箭头函数、Promise 都是 ES6 引入；var 是旧语法。'},
-  {type:'multiple',category:'CSS',question:'清除浮动（解决父元素高度塌陷）的方法有？',options:['父元素 overflow:hidden','额外元素 clear:both','伪元素 + content 清除','给子元素 float:left'],answer:[0,1,2],explanation:'前三种都是常见清浮动方案；float:left 本身制造浮动而非清除。'},
-  {type:'multiple',category:'HTML',question:'前端常见的浏览器端存储方案包括？',options:['localStorage','cookie','sessionStorage','IndexedDB'],answer:[0,1,2,3],explanation:'这四种都是浏览器端存储手段，IndexedDB 适合大量结构化数据。'},
-  // ---- 判断 5 ----
-  {type:'boolean',category:'JS',question:'=== 运算符既比较值也比较类型。',options:['正确','错误'],answer:0,explanation:'严格相等会同时比较值与类型，不做隐式转换。'},
-  {type:'boolean',category:'Vue3',question:'Vue3 仍然使用 Object.defineProperty 实现响应式。',options:['正确','错误'],answer:1,explanation:'Vue3 改为基于 Proxy 实现响应式。'},
-  {type:'boolean',category:'JS',question:'let 和 const 都具有块级作用域。',options:['正确','错误'],answer:0,explanation:'二者均为块级作用域，不同于 var 的函数作用域。'},
-  {type:'boolean',category:'CSS',question:'display:none 会保留元素原本占据的布局空间。',options:['正确','错误'],answer:1,explanation:'display:none 元素不生成盒子，不占据空间；visibility:hidden 才保留。'},
-  {type:'boolean',category:'JS',question:'Promise 一旦进入 fulfilled 状态就不能再变为 rejected。',options:['正确','错误'],answer:0,explanation:'Promise 状态一旦落定（fulfilled/rejected）就不可再改变。'},
+function getBank() { return load(LS.bank, []); }
+function saveBank(b) { save(LS.bank, b); }
+function getRounds() { return load(LS.rounds, []); }
+function getWrong() { return load(LS.wrong, {}); }
 
-  // ---- 补充单选 10（保证离线也能凑满一轮） ----
-  {type:'single',category:'JS',question:'typeof null 的返回值是？',options:['"null"','"object"','"undefined"','"boolean"'],answer:1,explanation:'这是 JS 的历史遗留问题，typeof null 返回 "object"，判断 null 应使用 === null。'},
-  {type:'single',category:'JS',question:'阻止事件继续向上冒泡应使用？',options:['stopPropagation()','preventDefault()','return false 一定可以','cancelBubble 只读'],answer:0,explanation:'event.stopPropagation() 阻止冒泡；preventDefault() 阻止的是默认行为。'},
-  {type:'single',category:'JS',question:'既能数组去重、又保持原有顺序的写法是？',options:['[...new Set(arr)]','arr.reverse()','arr.sort()','arr.join()'],answer:0,explanation:'Set 本身不重复，配合展开运算符可去重且保持插入顺序。'},
-  {type:'single',category:'Vue3',question:'Vue3 组合式 API 的入口函数是？',options:['setup','data','created','mounted'],answer:0,explanation:'setup 是组合式 API 的入口，在组件创建前执行。'},
-  {type:'single',category:'Vue2',question:'v-if 与 v-show 的区别，说法正确的是？',options:['v-show 只切换 display，元素始终渲染','v-if 只是切换 display','两者完全等价','v-show 会销毁并重建元素'],answer:0,explanation:'v-show 通过 display 切换、初次渲染后元素一直在；v-if 是条件渲染，会销毁/重建。'},
-  {type:'single',category:'HTML',question:'用于声明页面元信息、内容不直接显示在页面上的标签是？',options:['head','body','footer','main'],answer:0,explanation:'head 内放置 title、meta、link 等元信息，不直接渲染为可见内容。'},
-  {type:'single',category:'CSS',question:'行内元素（inline）设置以下哪组属性通常不生效？',options:['width / height','color','font-size','letter-spacing'],answer:0,explanation:'行内元素宽高由内容决定，需改为 inline-block 或 block 才能设置宽高。'},
-  {type:'single',category:'CSS',question:'flex-direction 的默认值是？',options:['row','column','row-reverse','inline'],answer:0,explanation:'flex 容器默认主轴为水平方向，即 flex-direction: row。'},
-  {type:'single',category:'JS',question:'下列哪个方法会返回新数组且不修改原数组？',options:['filter','push','splice','pop'],answer:0,explanation:'filter 返回新数组；push/splice/pop 都会修改原数组。'},
-  {type:'single',category:'Vue2',question:'Vue2 中 props 的数据流向是？',options:['父组件传给子组件（单向）','子组件传给父组件','父子自动双向同步','无限制随意修改'],answer:0,explanation:'props 是单向数据流，子组件不应直接修改 props；需要变更时通过 $emit 通知父组件。'},
+function getSettings() {
+  const s = load(LS.settings, {}) || {};
+  const provider = normalizeProvider(s.provider || 'pollinations');
+  const apiKeys = Object.assign({}, (s.apiKeys && typeof s.apiKeys === 'object') ? s.apiKeys : {});
+  if (s.apiKey && !apiKeys[provider]) apiKeys[provider] = s.apiKey;
+  const exclusions = Array.isArray(s.exclusions) ? s.exclusions : [];
+  return Object.assign({
+    provider: 'pollinations',
+    model: 'openai',
+    apiKey: '',
+    baseUrl: '',
+    exclusions: exclusions
+  }, s, { provider, apiKeys, exclusions });
+}
 
-  // ---- 补充多选 10 ----
-  {type:'multiple',category:'JS',question:'以下属于 JavaScript 基本（原始）类型的有？',options:['String','Number','Symbol','Array'],answer:[0,1,2],explanation:'Array 是引用类型；基本类型包括 String/Number/Boolean/Null/Undefined/Symbol/BigInt。'},
-  {type:'multiple',category:'JS',question:'下列会修改原数组的方法有？',options:['push','splice','sort','slice'],answer:[0,1,2],explanation:'slice 返回新数组不改变原数组；push/splice/sort 都会原地修改。'},
-  {type:'multiple',category:'Vue3',question:'Vue3 相比 Vue2 的改进包括？',options:['改用 Proxy 实现响应式','支持多根节点（Fragments）','新增组合式 API','只能使用 Options API'],answer:[0,1,2],explanation:'Vue3 用 Proxy 重写响应式、支持 Fragments 与组合式 API，同时仍兼容 Options API。'},
-  {type:'multiple',category:'CSS',question:'关于 position 的说法，正确的有？',options:['fixed 相对视口定位','absolute 相对最近的非 static 祖先定位','relative 元素仍保留原位置占位','static 会让元素脱离文档流'],answer:[0,1,2],explanation:'static 是默认值，不会脱离文档流；其余三项描述正确。'},
-  {type:'multiple',category:'HTML',question:'HTML5 新增的语义化标签包括？',options:['header','nav','section','div'],answer:[0,1,2],explanation:'div 是通用容器，不属于 HTML5 语义化标签。'},
-  {type:'multiple',category:'JS',question:'关于 Promise，说法正确的有？',options:['then 返回一个新的 Promise','catch 可捕获链上的错误','finally 无论成功失败都会执行','Promise 一旦创建就可以取消'],answer:[0,1,2],explanation:'Promise 没有内建的取消机制，需要借助 AbortController 等手段。'},
-  {type:'multiple',category:'Vue3',question:'Vue 中实现组件复用的方式包括？',options:['动态组件 component :is','v-for 循环渲染组件','keep-alive 缓存组件','v-html 渲染组件'],answer:[0,1,2],explanation:'v-html 用于插入 HTML 字符串，不能渲染组件。'},
-  {type:'multiple',category:'CSS',question:'下列操作会触发浏览器重排（reflow）的有？',options:['修改元素宽高','修改字体大小','读取 offsetWidth 等布局属性','仅修改 color'],answer:[0,1,2],explanation:'只改 color 一般只触发重绘；前几项会影响布局，触发重排。'},
-  {type:'multiple',category:'JS',question:'关于事件循环（Event Loop），说法正确的有？',options:['微任务优先于下一个宏任务执行','Promise.then 回调属于微任务','setTimeout 回调属于宏任务','宏任务总是先于微任务执行'],answer:[0,1,2],explanation:'每执行完一个宏任务会清空微任务队列，因此微任务先于下一个宏任务。'},
-  {type:'multiple',category:'CSS',question:'关于 flex 布局，说法正确的有？',options:['flex:1 常表示均分剩余空间','justify-content 控制主轴对齐','align-items 控制交叉轴对齐','flex 只能作用于块级元素'],answer:[0,1,2],explanation:'设为 display:flex 后容器内子项都参与 flex 布局，与元素原本的显示类型无关。'},
-
-  // ---- 补充判断 10 ----
-  {type:'boolean',category:'JS',question:'typeof NaN 的结果是 "number"。',options:['正确','错误'],answer:0,explanation:'NaN 的类型就是 number，只是它不等于任何值，包括自身。'},
-  {type:'boolean',category:'Vue3',question:'在模板中直接使用 ref 定义的响应式数据时，会自动解包（无需写 .value）。',options:['正确','错误'],answer:0,explanation:'模板中 ref 会自动解包；在 setup 或普通 JS 中访问则需要 .value。'},
-  {type:'boolean',category:'JS',question:'const 声明的变量完全不能被修改，包括对象的内部属性。',options:['正确','错误'],answer:1,explanation:'const 只限制变量绑定不可重新赋值，对象内部属性仍可修改。'},
-  {type:'boolean',category:'JS',question:'微任务会在当前宏任务结束后、下一个宏任务开始前全部执行完。',options:['正确','错误'],answer:0,explanation:'每轮宏任务完成后会清空微任务队列，再取下一个宏任务。'},
-  {type:'boolean',category:'CSS',question:'样式表中的 !important 声明可以覆盖普通的内联样式。',options:['正确','错误'],answer:0,explanation:'!important 可覆盖内联样式；若内联样式也带 !important，则内联优先。'},
-  {type:'boolean',category:'HTML',question:'img 标签必须写成成对标签，并以 </img> 结束。',options:['正确','错误'],answer:1,explanation:'img 是空元素（自闭合），不需要结束标签。'},
-  {type:'boolean',category:'Vue2',question:'组件的 data 必须是一个函数，以避免多个实例共享同一份数据。',options:['正确','错误'],answer:0,explanation:'返回函数的 data 保证每个组件实例拥有独立的数据副本。'},
-  {type:'boolean',category:'JS',question:'箭头函数内部有自己的 this，指向它的调用者。',options:['正确','错误'],answer:1,explanation:'箭头函数没有自己的 this，它会捕获定义时外层作用域的 this。'},
-  {type:'boolean',category:'CSS',question:'设置 box-sizing:border-box 后，width 会包含 padding 和 border。',options:['正确','错误'],answer:0,explanation:'border-box 下宽高包含 padding 与 border，内容区被相应压缩。'},
-  {type:'boolean',category:'HTML',question:'localStorage 保存的数据在浏览器关闭后就会丢失。',options:['正确','错误'],answer:1,explanation:'localStorage 长期保存；关闭浏览器就失效的是 sessionStorage。'},
-
-  // ---- 扩充单选 30 ----
-  {type:'single',category:'JS',question:'判断一个变量是否为数组，最可靠的方式是？',options:['Array.isArray(x)','typeof x === "array"','x.isArray()','x instanceof Object === false'],answer:0,explanation:'Array.isArray 最可靠；typeof 对数组返回 "object"，无法区分对象。'},
-  {type:'single',category:'JS',question:'关于闭包，说法正确的是？',options:['内层函数可以访问外层函数的变量','闭包会让外层变量立即销毁','闭包只能出现在全局作用域','闭包不能作为函数返回值'],answer:0,explanation:'闭包是函数与其词法作用域的组合，内层函数可持续访问外层变量。'},
-  {type:'single',category:'JS',question:'JSON.parse 的作用是？',options:['把 JSON 字符串解析成对象','把对象转成 JSON 字符串','对任意对象做深拷贝','解析 HTML 字符串'],answer:0,explanation:'JSON.parse 字符串转对象；JSON.stringify 才是对象转字符串。'},
-  {type:'single',category:'JS',question:'下列表达式结果不是 NaN 的是？',options:['Number("abc")','parseInt("abc")','0 / 0','Number("123")'],answer:3,explanation:'Number("123") 得到 123；其余三项都返回 NaN。'},
-  {type:'single',category:'JS',question:'关于 localStorage 与 sessionStorage，说法正确的是？',options:['localStorage 长期保存，sessionStorage 关闭标签页后清除','两者都是关闭浏览器即清除','sessionStorage 比 localStorage 保存更久','两者的容量都是无限的'],answer:0,explanation:'localStorage 长期有效；sessionStorage 只在当前会话（标签页）内有效。'},
-  {type:'single',category:'JS',question:'事件委托（事件代理）利用的原理是？',options:['事件冒泡','事件捕获','阻止默认行为','DOM 查询遍历'],answer:0,explanation:'事件冒泡让父元素可以统一处理子元素的事件，减少监听器数量。'},
-  {type:'single',category:'JS',question:'下列属于深拷贝做法的是？',options:['JSON.parse(JSON.stringify(obj))','直接赋值 b = a','Object.assign({}, obj)','展开运算符 {...obj}'],answer:0,explanation:'后三种都是浅拷贝；JSON 方案不能保留函数、undefined 等。'},
-  {type:'single',category:'JS',question:'关于 var 的变量提升，说法正确的是？',options:['声明会提升到作用域顶部，值为 undefined','var 不存在提升','提升后可直接使用赋值结果','var 仅提升函数声明，不提升变量'],answer:0,explanation:'var 声明提升、赋值不提升，所以在赋值前访问得到 undefined。'},
-  {type:'single',category:'Vue2',question:'computed 与 methods 的主要区别是？',options:['computed 有缓存，依赖不变时不会重新计算','computed 没有缓存','methods 有缓存','两者完全等价'],answer:0,explanation:'computed 基于依赖缓存，依赖变化才重新求值；methods 每次调用都执行。'},
-  {type:'single',category:'Vue2',question:'Vue2 中 watch 的作用是？',options:['监听数据变化并执行回调','定义计算属性','注册全局组件','修改路由参数'],answer:0,explanation:'watch 用于侦听数据变化执行副作用，适合异步或开销较大的逻辑。'},
-  {type:'single',category:'Vue2',question:'v-for 中使用 key 的主要目的是？',options:['帮助 diff 算法精确复用节点，提升性能','不写 key 会直接报错','用于对列表排序','用于绑定事件'],answer:0,explanation:'唯一 key 让虚拟 DOM diff 能正确识别节点，避免错位复用。'},
-  {type:'single',category:'Vue2',question:'Vue2 自定义指令中，元素插入父节点后触发的钩子是？',options:['inserted','bind','update','created'],answer:0,explanation:'bind 在绑定后调用一次；inserted 在元素插入父节点时调用。'},
-  {type:'single',category:'Vue3',question:'reactive 与 ref 的区别，说法正确的是？',options:['reactive 用于对象，ref 可包装任意值且需通过 .value 访问','两者完全一样','ref 只能用于数组','reactive 只能用于数字'],answer:0,explanation:'reactive 基于对象代理；ref 通过 .value 访问，可包装基本类型。'},
-  {type:'single',category:'Vue3',question:'Vue3 中 defineProps 的用途是？',options:['声明并接收父组件传入的 props','定义组件触发的事件','定义响应式数据','注册全局方法'],answer:0,explanation:'defineProps 在 script setup 中声明 props；defineEmits 用于声明事件。'},
-  {type:'single',category:'Vue3',question:'Vue3 组件上 v-model 默认对应的 prop 与事件是？',options:['modelValue 与 update:modelValue','value 与 input','model 与 change','data 与 emit'],answer:0,explanation:'Vue3 中组件 v-model 默认绑定 modelValue 与 update:modelValue。'},
-  {type:'single',category:'Vue3',question:'onMounted 属于哪一类 API？',options:['组合式 API 的生命周期钩子','选项式 API 钩子','响应式 API','渲染函数'],answer:0,explanation:'onMounted 是组合式 API 提供的生命周期钩子，在挂载后执行。'},
-  {type:'single',category:'HTML',question:'a 标签的 target="_blank" 表示？',options:['在新标签页打开链接','在当前页面打开链接','下载链接','阻止跳转'],answer:0,explanation:'target="_blank" 会在新标签页打开，建议同时加 rel="noopener"。'},
-  {type:'single',category:'HTML',question:'表单中作为提交按钮的正确写法是？',options:['button type="submit"','button type="button"','input type="text"','submit 标签'],answer:0,explanation:'type="submit" 会触发表单提交；type="button" 只是普通按钮。'},
-  {type:'single',category:'HTML',question:'用于定义表格表头单元格的标签是？',options:['th','td','tr','table'],answer:0,explanation:'th 是表头单元格（默认加粗居中），td 是普通数据单元格。'},
-  {type:'single',category:'HTML',question:'用于标记页面主要内容区域的语义标签是？',options:['main','aside','footer','nav'],answer:0,explanation:'main 表示页面主体内容，aside 是侧边补充内容。'},
-  {type:'single',category:'HTML',question:'img 标签中用于提供替代文本（无障碍）的属性是？',options:['alt','title','name','label'],answer:0,explanation:'alt 在图片加载失败时显示，也供屏幕阅读器朗读。'},
-  {type:'single',category:'CSS',question:'已知宽高时，让元素在父容器中水平垂直居中的写法是？',options:['position:absolute; top:50%; left:50%; transform:translate(-50%,-50%)','text-align:center','float:center','vertical-align:middle'],answer:0,explanation:'绝对定位 50% 配合 transform 反向偏移是最常用的居中方案。'},
-  {type:'single',category:'CSS',question:'z-index 生效的前提是？',options:['元素处于同一层叠上下文中且通常需要定位或参与层叠上下文','必须设置 float','必须设置 display:flex','必须设置 color'],answer:0,explanation:'z-index 只对层叠上下文中的元素生效，static 定位下设置通常无效。'},
-  {type:'single',category:'CSS',question:'transition 与 animation 的区别是？',options:['transition 需状态变化触发，animation 可自动播放并定义关键帧','两者完全一样','animation 不能循环播放','transition 可以自定义关键帧'],answer:0,explanation:'transition 是过渡，需要属性值变化触发；animation 配合 @keyframes 可自动、循环播放。'},
-  {type:'single',category:'CSS',question:'媒体查询的正确写法是？',options:['@media (max-width:768px) { }','@media-width:768px { }','media(768px) { }','@screen 768px { }'],answer:0,explanation:'媒体查询语法为 @media 条件 { 样式 }，常用于响应式断点。'},
-  {type:'single',category:'CSS',question:'让单行文字超出部分显示省略号，必须同时设置的属性是？',options:['overflow:hidden; white-space:nowrap; text-overflow:ellipsis','只写 text-overflow:ellipsis','只写 overflow:hidden','display:none'],answer:0,explanation:'三个属性缺一不可：溢出隐藏、不换行、超出显示省略号。'},
-  {type:'single',category:'CSS',question:'em 与 rem 的区别是？',options:['em 相对父元素字体大小，rem 相对根元素字体大小','两者完全相同','rem 相对父元素，em 相对根元素','rem 相对视口宽度'],answer:0,explanation:'rem 只认 html 的 font-size，更利于整体缩放的响应式布局。'},
-  {type:'single',category:'CSS',question:'下列可以创建层叠上下文的是？',options:['opacity 小于 1','color:red','font-weight:bold','border:1px solid'],answer:0,explanation:'opacity 小于 1、transform 非 none、position 非 static 配合 z-index 等都会创建层叠上下文。'},
-  {type:'single',category:'CSS',question:'让 flex 子项在空间不足时换行的属性是？',options:['flex-wrap:wrap','flex-flow:row nowrap','align-content:center','justify-content:center'],answer:0,explanation:'flex-wrap:wrap 允许换行；默认 nowrap 会压缩子项。'},
-  {type:'single',category:'CSS',question:'父元素高度塌陷时，用伪元素清除浮动的常见写法是？',options:['父元素::after { content:""; display:block; clear:both }','父元素::before { content:none }','子元素 { clear:none }','父元素 { float:none }'],answer:0,explanation:'伪元素生成块级盒子并 clear:both，可撑起父元素高度。'},
-
-  // ---- 扩充多选 15 ----
-  {type:'multiple',category:'JS',question:'以下属于 ES6 新增语法的有？',options:['解构赋值','模板字符串','扩展运算符','with 语句'],answer:[0,1,2],explanation:'with 是很早就有的语句（且不推荐使用）；前三项都是 ES6 引入。'},
-  {type:'multiple',category:'Vue2',question:'以下会触发组件重新渲染的有？',options:['data 中响应式数据变化','父组件传入的 props 变化','调用 this.$forceUpdate()','只修改未纳入响应式的自定义属性'],answer:[0,1,2],explanation:'非响应式属性变化不会触发更新，需要 Vue.set 或改为响应式数据。'},
-  {type:'multiple',category:'JS',question:'关于 HTTP 状态码，说法正确的有？',options:['200 表示请求成功','301 表示永久重定向','404 表示资源不存在','500 表示请求参数错误'],answer:[0,1,2],explanation:'500 表示服务端内部错误；参数错误一般是 400。'},
-  {type:'multiple',category:'HTML',question:'常见的前端性能优化手段包括？',options:['图片懒加载','代码分割与按需加载','使用 CDN 加速静态资源','把大量数据写进 cookie'],answer:[0,1,2],explanation:'cookie 会随请求发送且容量小，塞大量数据反而拖慢性能。'},
-  {type:'multiple',category:'JS',question:'关于跨域，说法正确的有？',options:['同源要求协议、域名、端口都相同','CORS 需要服务端返回相应响应头','JSONP 利用 script 标签实现','同源策略只限制 img 标签'],answer:[0,1,2],explanation:'同源策略限制的是 XHR/fetch 等读取行为，img/script 等标签加载通常不受限。'},
-  {type:'multiple',category:'CSS',question:'可以用 CSS 实现居中的方案有？',options:['flex 的 justify-content + align-items','绝对定位 + transform','grid 的 place-items:center','float:center'],answer:[0,1,2],explanation:'并不存在 float:center，前三项都是常用居中方案。'},
-  {type:'multiple',category:'Vue3',question:'关于 Vue 生命周期，说法正确的有？',options:['created 阶段 DOM 还未挂载','mounted 阶段 DOM 已挂载','可以在卸载钩子里清理定时器','updated 只在首次渲染时触发一次'],answer:[0,1,2],explanation:'updated 在数据更新导致的重新渲染后都会触发，不是只触发一次。'},
-  {type:'multiple',category:'JS',question:'关于 JS 数据类型，说法正确的有？',options:['null 属于基本类型','数组属于引用类型','typeof 函数返回 "function"','typeof 数组返回 "array"'],answer:[0,1,2],explanation:'typeof 数组返回 "object"，要用 Array.isArray 判断。'},
-  {type:'multiple',category:'HTML',question:'移动端适配常用的做法有？',options:['设置 viewport meta','使用媒体查询','使用 rem / vw 布局','固定 px 且不设置 viewport'],answer:[0,1,2],explanation:'固定 px 且缺少 viewport 会导致移动端缩放异常、布局错乱。'},
-  {type:'multiple',category:'HTML',question:'关于 localStorage，说法正确的有？',options:['容量通常约 5MB','只能存储字符串','同源页面之间共享','自带过期时间设置'],answer:[0,1,2],explanation:'localStorage 没有内建过期机制，需要自行存时间戳来判断过期。'},
-  {type:'multiple',category:'JS',question:'关于打包工具（Webpack / Vite）的作用，说法正确的有？',options:['模块打包','开发时热更新（HMR）','代码压缩与资源优化','替代浏览器渲染 DOM'],answer:[0,1,2],explanation:'打包工具负责构建与优化，页面的 DOM 仍由浏览器渲染。'},
-  {type:'multiple',category:'CSS',question:'关于盒模型，说法正确的有？',options:['标准盒模型的 width 只包含内容区','border-box 下 width 包含 padding 与 border','box-sizing 可以切换盒模型计算方式','margin 会算进 width 里'],answer:[0,1,2],explanation:'margin 不属于盒模型的 width 计算范围，它是盒子外部的间距。'},
-  {type:'multiple',category:'JS',question:'关于防抖与节流，说法正确的有？',options:['防抖是等停止触发一段时间后再执行','节流是固定时间内最多执行一次','两者都能降低高频事件的处理次数','两者完全等价'],answer:[0,1,2],explanation:'防抖看「停止」，节流看「间隔」，适用场景不同。'},
-  {type:'multiple',category:'Vue3',question:'关于 Vue2 与 Vue3，说法正确的有？',options:['Vue3 响应式基于 Proxy','Vue3 支持组合式 API','Vue3 模板支持多根节点','Vue3 完全不再支持选项式 API'],answer:[0,1,2],explanation:'Vue3 仍兼容选项式 API，只是新增了组合式写法。'},
-  {type:'multiple',category:'CSS',question:'关于浏览器渲染，说法正确的有？',options:['DOM 树与 CSSOM 合并生成渲染树','重排（reflow）开销通常大于重绘','transform / opacity 动画更容易走合成层，更流畅','只要修改 DOM 就一定触发重排'],answer:[0,1,2],explanation:'修改 color 之类只触发重绘；只有影响几何布局的修改才会重排。'},
-
-  // ---- 扩充判断 15 ----
-  {type:'boolean',category:'JS',question:'数组的 length 属性可以被手动赋值，并影响数组长度。',options:['正确','错误'],answer:0,explanation:'给 length 赋更小的值会截断数组，赋更大的值会产生空位。'},
-  {type:'boolean',category:'Vue3',question:'在 setup 中访问 ref 定义的数据需要通过 .value。',options:['正确','错误'],answer:0,explanation:'模板中会自动解包，但在 JS 代码里必须写 .value。'},
-  {type:'boolean',category:'CSS',question:'垂直方向上相邻块级元素的 margin 会发生合并（塌陷）。',options:['正确','错误'],answer:0,explanation:'相邻的上下外边距会取较大值合并；BFC、padding、border 可阻止合并。'},
-  {type:'boolean',category:'JS',question:'for...in 遍历数组时得到的是数组的元素值而不是索引。',options:['正确','错误'],answer:1,explanation:'for...in 得到的是键（数组即索引字符串），遍历数组建议用 for...of。'},
-  {type:'boolean',category:'JS',question:'加号 + 既可用于数值相加，也可用于字符串拼接。',options:['正确','错误'],answer:0,explanation:'只要有一侧是字符串就会做字符串拼接，否则做数值加法。'},
-  {type:'boolean',category:'CSS',question:'display:inline 的元素可以设置上下 margin 并正常生效。',options:['正确','错误'],answer:1,explanation:'行内元素的垂直方向 margin 不生效，水平方向有效。'},
-  {type:'boolean',category:'Vue2',question:'使用 v-for 时建议为每个列表项提供唯一的 key。',options:['正确','错误'],answer:0,explanation:'唯一 key 能让虚拟 DOM diff 正确复用节点，避免状态错乱。'},
-  {type:'boolean',category:'HTML',question:'同一页面中 id 可以重复出现多次。',options:['正确','错误'],answer:1,explanation:'id 在页面内必须唯一，重复会导致选择器与锚点行为异常。'},
-  {type:'boolean',category:'CSS',question:'在 flex 容器中，子元素的 float 属性仍然有明显效果。',options:['正确','错误'],answer:1,explanation:'flex 子项的 float 会被忽略，不再参与浮动布局。'},
-  {type:'boolean',category:'JS',question:'Promise.all 中任意一个 Promise 失败，整体就会立刻进入 rejected。',options:['正确','错误'],answer:0,explanation:'Promise.all 是快速失败；若想拿到全部结果可用 Promise.allSettled。'},
-  {type:'boolean',category:'CSS',question:'类选择器的优先级高于 id 选择器。',options:['正确','错误'],answer:1,explanation:'优先级顺序为 内联 > id > class > 标签，id 高于 class。'},
-  {type:'boolean',category:'HTML',question:'同一个标签页刷新后，sessionStorage 中的数据仍然保留。',options:['正确','错误'],answer:0,explanation:'sessionStorage 在标签页会话期内有效，刷新不丢，关闭标签页才清除。'},
-  {type:'boolean',category:'JS',question:'递归函数必须有终止条件，否则可能造成栈溢出。',options:['正确','错误'],answer:0,explanation:'缺少终止条件会导致无限递归，最终抛出栈溢出错误。'},
-  {type:'boolean',category:'Vue3',question:'watchEffect 会自动收集依赖，不需要显式指定监听源。',options:['正确','错误'],answer:0,explanation:'watchEffect 执行时自动追踪用到的响应式数据作为依赖。'},
-  {type:'boolean',category:'HTML',question:'把 script 放在 head 中且不加 defer / async，会阻塞页面渲染。',options:['正确','错误'],answer:0,explanation:'同步脚本会暂停 HTML 解析直到下载并执行完毕。'},
-
-  // ---- 封装（基础） ----
-  {type:'single',category:'封装',question:'在前端开发中，"封装"主要是指？',options:['把数据和行为组合在一起并隐藏内部实现细节','把代码写得更长','只能使用 class 实现','仅用于后端开发'],answer:0,explanation:'封装是面向对象/模块化的基本思想：对外暴露稳定接口、对内隐藏易变细节，降低耦合。'},
-  {type:'single',category:'封装',question:'JavaScript 中利用闭包可以较好地实现？',options:['模块或函数的私有变量','全局变量','自动垃圾回收','无限循环'],answer:0,explanation:'闭包让内部变量不被外部直接访问，是实现私有状态（封装）的常用手段。'},
-  {type:'multiple',category:'封装',question:'下列有助于代码封装与模块化的做法有？',options:['ES Module 的 import/export','IIFE 创建私有作用域','把全部变量挂到 window 上','用命名空间对象收敛对外接口'],answer:[0,1,3],explanation:'ES Module 与 IIFE 都能隔离作用域；把所有变量挂到 window 反而造成全局污染。'},
-  {type:'boolean',category:'封装',question:'良好的封装要求尽量把实现细节对外隐藏，只暴露必要的接口。',options:['正确','错误'],answer:0,explanation:'封装的核心是信息隐藏：对外暴露稳定接口、对内隐藏易变的实现。'},
-  // ---- 优化（基础） ----
-  {type:'single',category:'优化',question:'图片"懒加载（lazy load）"的主要作用是？',options:['延迟加载视口外的图片，减少首屏请求与流量','让图片更清晰','替代 CSS 布局','禁用所有图片'],answer:0,explanation:'懒加载只在图片进入视口时才请求资源，能显著减少首屏请求数与白屏时间。'},
-  {type:'single',category:'优化',question:'代码分割（Code Splitting）的主要目的是？',options:['拆分打包体积，按需加载、减小首屏压力','让源码更难阅读','提高 CPU 主频','替代浏览器缓存'],answer:0,explanation:'配合动态 import 把不急需的代码拆成独立 chunk，首屏只加载必要内容。'},
-  {type:'multiple',category:'优化',question:'下列有助于减少重排（reflow）的做法有？',options:['批量读写 DOM','使用 transform/opacity 做动画','频繁读取 offsetWidth 触发同步布局','用 will-change 提示浏览器'],answer:[0,1,3],explanation:'频繁读取布局属性会强制同步布局；transform/opacity 走合成层，开销更小。'},
-  {type:'boolean',category:'优化',question:'合理设置 HTTP 缓存（如 Cache-Control）可以减少重复请求、加快二次访问。',options:['正确','错误'],answer:0,explanation:'缓存让静态资源在客户端/代理处复用，显著降低请求数与延迟。'}
-];
-
-/* ============ 工具函数 ============ */
-function hashQid(type, q){
+/* ==========================================================================
+   6. 工具与排除法过滤
+   ========================================================================== */
+function hashQid(type, q) {
   const s = type + '|' + q.trim();
   let h = 5381;
-  for (let i=0;i<s.length;i++){ h = ((h<<5) + h + s.charCodeAt(i)) | 0; }
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
   return 'q' + (h >>> 0).toString(36);
 }
-function shuffle(arr){
+
+function shuffle(arr) {
   const a = arr.slice();
-  for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
   return a;
 }
-function pad(n){ return String(n).padStart(2,'0'); }
-function stamp14(d){ d = d||new Date(); return ''+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds()); }
-function fmtTime(ts){ const d=new Date(ts); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
 
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+function pad(n) { return String(n).padStart(2, '0'); }
+function stamp14(d) {
+  d = d || new Date();
+  return '' + d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+}
+function fmtTime(ts) {
+  if (!ts) return '近期';
+  const d = new Date(ts);
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
 
-/* ============ 题库：去重注入 ============ */
-/* 内置题库：每次启动都把缺失的内置题补进题库（去重），保证离线也能凑满一轮 */
-function seedBankIfEmpty(){
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span style="color:var(--brand)">⚡</span> <span>${escapeHtml(msg)}</span>`;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function addToBank(questions) {
   const bank = getBank();
-  const set = new Set(bank.map(b=>b.qid));
-  let added = 0;
-  for (const q of BUILTIN){
+  const set = new Set(bank.map(b => b.qid));
+  const added = [];
+  for (const q of questions) {
     const qid = hashQid(q.type, q.question);
     if (set.has(qid)) continue;
     set.add(qid);
-    bank.push(Object.assign({ qid, createdAt: Date.now(), builtin:true }, q));
-    added++;
-  }
-  if (added > 0) saveBank(bank);
-  return added;
-}
-function addToBank(questions){
-  const bank = getBank();
-  const set = new Set(bank.map(b=>b.qid));
-  const added = [];
-  for (const q of questions){
-    const qid = hashQid(q.type, q.question);
-    if (set.has(qid)){ continue; }
-    set.add(qid);
-    const item = Object.assign({ qid, createdAt: Date.now() }, q);
-    bank.push(item); added.push(item);
+    const item = Object.assign({ qid, createdAt: Date.now(), track: 'frontend' }, q);
+    bank.push(item);
+    added.push(item);
   }
   if (added.length) saveBank(bank);
   return added.length;
 }
-function getFromBank(qid){ return getBank().find(b=>b.qid===qid) || null; }
 
-/* ============ AI 调用 ============ */
-/* 说明：原「免 key 公益代理」(platform.aitools.cfd) 已失效（接口 404）。
-   零配置的免 Key 通道（Pollinations）实测会限流，因此默认改为「本地题库出题」，
-   AI 出题作为增强项：想用 AI 只需在设置里填一个免费 Key（推荐智谱 glm-4-flash）。 */
-const PROVIDER_PRESETS = {
-  local:      { label:'本地题库出题（默认，无需联网，永远可用）', chatUrl:'',
-                 models:[], model:'', needKey:false, local:true,
-                 hint:'直接从本地题库随机抽一轮（题库会随 AI 出题不断变厚）。不联网也能用，最稳。' },
-  zhipu:      { label:'智谱 GLM（glm-4-flash 免费，最稳，推荐）', chatUrl:'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-                 models:['glm-4-flash','glm-4-flash-250414','glm-4-air','glm-4-plus'], model:'glm-4-flash', needKey:true,
-                 keyUrl:'https://open.bigmodel.cn/usercenter/apikeys', hint:'手机号注册 open.bigmodel.cn → 控制台「API Keys」创建密钥，glm-4-flash 免费。' },
-  pollinations:{ label:'免 Key 免费通道（Pollinations，零配置但可能限流）', chatUrl:'https://text.pollinations.ai/openai',
-                 models:['openai','openai-fast'], model:'openai', needKey:false,
-                 hint:'不用填 Key 即可出题，但海外服务、匿名档有限流，失败时请改用智谱或本地题库。' },
-  siliconflow:{ label:'硅基流动 SiliconFlow（注册送额度）', chatUrl:'https://api.siliconflow.cn/v1/chat/completions',
-                 models:['deepseek-ai/DeepSeek-V3','Qwen/Qwen2.5-7B-Instruct','THUDM/glm-4-9b-chat'], model:'deepseek-ai/DeepSeek-V3', needKey:true,
-                 keyUrl:'https://cloud.siliconflow.cn/account/ak', hint:'注册后在「API 密钥」页面创建 Key，有免费额度。' },
-  deepseek:   { label:'DeepSeek 官方（需少量余额）', chatUrl:'https://api.deepseek.com/chat/completions',
-                 models:['deepseek-chat','deepseek-reasoner'], model:'deepseek-chat', needKey:true,
-                 keyUrl:'https://platform.deepseek.com/api_keys', hint:'需要账户里有余额才能调用。' },
-  custom:     { label:'自定义（任意 OpenAI 兼容接口）', chatUrl:'',
-                 models:[], model:'', needKey:true,
-                 hint:'填写完整的 chat/completions 地址、模型名和 Key。' }
-};
-function normalizeProvider(p){ return (p && PROVIDER_PRESETS[p]) ? p : 'local'; }
-function modelsOf(preset){ return preset.models || []; }
-function pickContent(data){
-  if (!data) return '';
-  const msg = data.choices && data.choices[0] && data.choices[0].message;
-  if (msg){
-    const c = msg.content;
-    if (typeof c === 'string' && c.trim()) return c;
-    if (Array.isArray(c)){
-      const joined = c.map(p => (typeof p === 'string' ? p : (p && p.text) || '')).join('');
-      if (joined.trim()) return joined;
-    }
-    if (c && typeof c === 'object' && c.text) return c.text;
-    // 有些模型（如 gpt-oss 系列）把内容写进 reasoning 字段
-    if (typeof msg.reasoning === 'string' && msg.reasoning.trim()) return msg.reasoning;
+function getFromBank(qid) {
+  return getBank().find(b => b.qid === qid) || null;
+}
+
+function questionMatchesExclusions(q, exclusions) {
+  if (!exclusions || !exclusions.length) return false;
+  const content = (q.category + ' ' + q.question + ' ' + (q.options || []).join(' ') + ' ' + (q.explanation || '')).toLowerCase();
+  for (const ex of exclusions) {
+    const term = String(ex).trim().toLowerCase();
+    if (term && content.includes(term)) return true;
   }
-  return typeof data.content === 'string' ? data.content : '';
+  return false;
 }
 
-function resolveAIConfig(s){
-  const provider = normalizeProvider(s.provider);
-  const preset = PROVIDER_PRESETS[provider];
-  if (preset.local) throw new Error('当前为「本地题库出题」模式，不需要调用 AI。想用 AI 出题请在「设置/AI」里选智谱 GLM 等接口并填 Key。');
-  // 若设置里残留了别的服务商的模型名，自动回落到当前服务商的默认模型
-  let model = (s.model || '').trim();
-  if (s.provider !== 'custom' && modelsOf(preset).length && modelsOf(preset).indexOf(model) < 0) model = preset.model;
-  model = model || preset.model;
-  const isCustom = provider === 'custom';
-  const chatUrl = isCustom ? (s.baseUrl || '').trim() : preset.chatUrl;
-  const key = ((s.apiKeys || {})[provider] || s.apiKey || '').trim();
-  if (!chatUrl) throw new Error('请填写自定义接口的完整地址（形如 https://xxx/v1/chat/completions）');
-  if (!model) throw new Error('请选择或填写模型名');
-  if (preset.needKey && !key) throw new Error('请先填写「'+preset.label.split('（')[0]+'」的 API Key'+(preset.keyUrl?'（免费获取：'+preset.keyUrl+'）':''));
-  return { provider, preset, chatUrl, model, key };
+function sampleFromBank(n, exclusions) {
+  const allBank = getBank();
+  if (allBank.length === 0) return [];
+  let bank = allBank;
+  if (exclusions && exclusions.length > 0) {
+    bank = allBank.filter(q => !questionMatchesExclusions(q, exclusions));
+  }
+  if (bank.length === 0) return [];
+
+  const byType = { single: [], multiple: [], boolean: [] };
+  for (const q of bank) {
+    if (byType[q.type]) byType[q.type].push(q);
+  }
+
+  const want = {
+    single: Math.min(40, byType.single.length),
+    multiple: Math.min(10, byType.multiple.length),
+    boolean: Math.min(10, byType.boolean.length)
+  };
+
+  let picks = [];
+  for (const t of ['single', 'multiple', 'boolean']) {
+    picks = picks.concat(shuffle(byType[t]).slice(0, want[t]));
+  }
+  let remain = n - picks.length;
+  if (remain > 0) {
+    const pool = shuffle(bank.filter(q => !picks.includes(q)));
+    picks = picks.concat(pool.slice(0, remain));
+  }
+
+  return shuffle(picks).map(q => ({
+    type: q.type,
+    category: q.category,
+    question: q.question,
+    options: q.options.slice(),
+    answer: Array.isArray(q.answer) ? q.answer.slice() : q.answer,
+    explanation: q.explanation,
+    qid: q.qid,
+    createdAt: q.createdAt
+  }));
 }
 
-async function callAI(messages, settingsOverride){
+/* ==========================================================================
+   7. AI 出题与 Prompt 构建
+   ========================================================================== */
+const PROVIDER_PRESETS = {
+  pollinations: {
+    label: '免费默认通道（零配置免 Key，开箱即用）',
+    chatUrl: 'https://text.pollinations.ai/openai',
+    models: ['openai', 'openai-fast'],
+    model: 'openai',
+    needKey: false,
+    hint: 'EasyOffer 预置的默认免 Key 免费通道。如遇海外网络限流，建议填入自己的智谱或 DeepSeek 密钥体验极速生成。'
+  },
+  zhipu: {
+    label: '智谱 GLM（推荐，glm-4-flash 免费且超稳定）',
+    chatUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+    models: ['glm-4-flash', 'glm-4-flash-250414', 'glm-4-air', 'glm-4-plus'],
+    model: 'glm-4-flash',
+    needKey: true,
+    keyUrl: 'https://open.bigmodel.cn/usercenter/apikeys',
+    hint: '手机号注册 open.bigmodel.cn 创建 API Key，glm-4-flash 免费额度充足且极速。'
+  },
+  deepseek: {
+    label: 'DeepSeek 官方 API（高品质低成本）',
+    chatUrl: 'https://api.deepseek.com/chat/completions',
+    models: ['deepseek-chat', 'deepseek-reasoner'],
+    model: 'deepseek-chat',
+    needKey: true,
+    keyUrl: 'https://platform.deepseek.com/api_keys',
+    hint: '支持 deepseek-chat，出题质量高，需账户少量余额。'
+  },
+  siliconflow: {
+    label: '硅基流动 SiliconFlow（赠送额度）',
+    chatUrl: 'https://api.siliconflow.cn/v1/chat/completions',
+    models: ['deepseek-ai/DeepSeek-V3', 'Qwen/Qwen2.5-7B-Instruct', 'THUDM/glm-4-9b-chat'],
+    model: 'deepseek-ai/DeepSeek-V3',
+    needKey: true,
+    keyUrl: 'https://cloud.siliconflow.cn/account/ak',
+    hint: '国内大模型托管平台，注册赠送代金券。'
+  },
+  custom: {
+    label: '自定义 OpenAI 兼容接口',
+    chatUrl: '',
+    models: [],
+    model: '',
+    needKey: true,
+    hint: '填写完整 chat/completions 地址、模型名与 Key。'
+  }
+};
+
+function normalizeProvider(p) {
+  return (p && PROVIDER_PRESETS[p]) ? p : 'pollinations';
+}
+
+function buildPrompt(part, exclusions) {
+  let exclusionRule = '';
+  if (exclusions && exclusions.length > 0) {
+    const exStr = exclusions.join('、');
+    exclusionRule = `
+【CRITICAL EXCLUSION RULE / 核心排除规则（排除法）】：
+出题范围必须【绝对排除】以下内容/技术栈/关键词：[ ${exStr} ]。
+严禁出现任何与上述被排除项相关的题干、选项、技术点或解析！例如若排除了 Vue3，就绝对不要出现任何 Vue3、Composition API、setup、ref/reactive 等相关题目。请使用该方向其余技术栈出题！
+`;
+  }
+
+  const head = `你是资深专业的前端面试出题专家。请严格按照要求生成「Web 前端开发」的高频面试练习题，只返回合法 JSON 数组（严禁任何开场白、废话或 markdown 代码块）。
+
+基础出题范围：JavaScript、Vue2、Vue3、HTML5、CSS3、前端工程化与性能优化。
+难度要求：全部为常见客观题，注重高频核心概念，不要偏门冷门怪题。
+${exclusionRule}
+`;
+
+  const fmt = `
+每道题的对象格式：
+{
+  "type": "single" | "multiple" | "boolean",
+  "category": "所属分类简称（如 JavaScript, HTML/CSS, Vue2, Vue3, React, TypeScript, Webpack, Node.js 等）",
+  "question": "清晰题干",
+  "options": ["选项A", "选项B", ...],
+  "answer": 数字索引（单选/判断）或 正确选项索引数组（多选，如 [0, 2]）,
+  "explanation": "简明解析（1~2 句话，直击考点）"
+}
+要求：解析简练不冗长，确保整体 JSON 完整不被截断；只返回一个纯 JSON 数组。`;
+
+  if (part === 'single') {
+    return head + `
+本批次任务：恰好 40 道单选题（type 为 "single"），每题固定 4 个选项，answer 为正确选项索引（0 到 3）。
+` + fmt;
+  }
+  return head + `
+本批次任务：共 20 道题 = 10 道多选题（type 为 "multiple"，每题 3~4 个选项，answer 为包含至少2项的索引数组） + 10 道判断题（type 为 "boolean"，options 固定为 ["正确","错误"]，answer 为 0 或 1）。
+` + fmt;
+}
+
+function toIndex(a) {
+  if (typeof a === 'number') return a;
+  if (typeof a === 'string') {
+    const s = a.trim();
+    if (/^[0-9]+$/.test(s)) return parseInt(s, 10);
+    const m = s.match(/[A-Za-z]/);
+    if (m) return m[0].toUpperCase().charCodeAt(0) - 65;
+  }
+  return -1;
+}
+
+function normalizeQuestion(r) {
+  const type = (r && r.type || '').toLowerCase();
+  if (['single', 'multiple', 'boolean'].indexOf(type) < 0) return null;
+  let options = Array.isArray(r.options) ? r.options.map(String) : [];
+  if (type === 'boolean') options = ['正确', '错误'];
+  if (options.length < 2) return null;
+  let answer;
+  if (type === 'multiple') {
+    let arr = Array.isArray(r.answer) ? r.answer : [r.answer];
+    answer = arr.map(toIndex).filter(i => i >= 0 && i < options.length);
+    if (answer.length < 1) return null;
+    answer = Array.from(new Set(answer)).sort((a, b) => a - b);
+  } else {
+    answer = toIndex(r.answer);
+    if (answer < 0 || answer >= options.length) return null;
+  }
+  const category = normalizeCategoryName(r.category || 'JavaScript');
+  const question = String(r.question || '').trim();
+  if (!question) return null;
+  const explanation = String(r.explanation || '（暂无解析）').trim();
+  return { type, category, question, options, answer, explanation };
+}
+
+function parseAIQuestions(text) {
+  let raw = text.trim();
+  raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  let arr;
+  try { arr = JSON.parse(raw); }
+  catch(e) {
+    const s = raw.indexOf('['), eIdx = raw.lastIndexOf(']');
+    if (s >= 0 && eIdx > s) {
+      try { arr = JSON.parse(raw.slice(s, eIdx + 1)); } catch(e2) { arr = null; }
+    }
+  }
+  if (!Array.isArray(arr)) throw new Error('AI 返回内容无法解析为合法 JSON 数组');
+  const out = [];
+  for (const item of arr) {
+    const q = normalizeQuestion(item);
+    if (q) out.push(q);
+  }
+  if (out.length === 0) throw new Error('AI 返回的题目未通过合规校验');
+  return out;
+}
+
+async function callAI(messages, settingsOverride) {
   const s = Object.assign({}, getSettings(), settingsOverride || {});
-  // 有本地服务时，AI 调用走后端代理（同源、无 CORS，Key 仅存本机后端）
-  if (USE_SERVER){
-    const resp = await fetch('/api/ai', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messages, settings: s }) });
-    if (!resp.ok){
-      let detail='';
-      try{ const j = await resp.json(); detail = j && j.error ? j.error : JSON.stringify(j).slice(0,200); }
-      catch(e){ try{ detail = (await resp.text()).slice(0,200); }catch(e2){} }
-      throw new Error(detail || ('AI 接口返回 '+resp.status));
+  if (USE_SERVER) {
+    const resp = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, settings: s })
+    });
+    if (!resp.ok) {
+      let detail = '';
+      try { const j = await resp.json(); detail = j.error || JSON.stringify(j); }
+      catch(e) { try { detail = await resp.text(); } catch(e2) {} }
+      throw new Error(detail || ('HTTP ' + resp.status));
     }
     const data = await resp.json();
     if (data.error) throw new Error(data.error);
     return data.content || '';
   }
 
-  const cfg = resolveAIConfig(s, false);
-  const resp = await fetch(cfg.chatUrl, {
-    method:'POST',
-    headers: Object.assign({'Content-Type':'application/json'}, cfg.key?{'Authorization':'Bearer '+cfg.key}:{}),
-    body: JSON.stringify({ model: cfg.model, messages, temperature:0.7, stream:false })
+  const provider = normalizeProvider(s.provider);
+  const preset = PROVIDER_PRESETS[provider];
+  const chatUrl = provider === 'custom' ? s.baseUrl : preset.chatUrl;
+  const key = ((s.apiKeys || {})[provider] || s.apiKey || '').trim();
+  const model = s.model || preset.model;
+  const resp = await fetch(chatUrl, {
+    method: 'POST',
+    headers: Object.assign({ 'Content-Type': 'application/json' }, key ? { 'Authorization': 'Bearer ' + key } : {}),
+    body: JSON.stringify({ model, messages, temperature: 0.7, stream: false })
   });
   const text = await resp.text();
-  if (!resp.ok){
-    let detail = text.slice(0, 300).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
-    if (resp.status === 401 || resp.status === 403) detail = 'API Key 无效或没有权限，请到「设置/AI」检查 Key。' + detail;
-    else if (resp.status === 402) detail = '该接口额度不足（免费额度用尽），建议改用智谱 glm-4-flash 或本地题库。' + detail;
-    else if (resp.status === 429) detail = '请求过于频繁被限流，稍等一会儿再试，或改用智谱/本地题库。' + detail;
-    else if (resp.status === 404) detail = '接口地址不对（404），请检查服务商与接口地址。' + detail;
-    throw new Error('接口返回 '+resp.status+'：'+(detail || '（无内容）'));
-  }
-  let data;
-  try{ data = JSON.parse(text); }
-  catch(e){ throw new Error('接口返回的内容不是 JSON（可能是被网关拦截或模型不支持）：'+text.slice(0,120)); }
-  const out = pickContent(data);
-  if (!out) throw new Error('接口未返回有效内容'+(data.error ? '：'+(data.error.message||data.error) : ''));
-  return out;
+  const data = JSON.parse(text);
+  const msg = data.choices && data.choices[0] && data.choices[0].message;
+  return (msg && msg.content) || '';
 }
 
-function buildPrompt(part){
-  const head = `请严格按照要求生成前端面试基础练习题，只返回一个 JSON 数组（不要任何解释文字，不要 markdown 代码块）。
-
-题目范围：仅限前端面试最基础的知识点，覆盖 JavaScript、Vue2、Vue3、HTML、CSS。
-难度要求：全部为基础题。不要算法题，不要难度高或需要复杂计算的题，不要冷门偏题。
-`;
-  const fmt = `
-每道题的对象格式：
-{
-  "type": "single" | "multiple" | "boolean",
-  "category": "JS" | "Vue2" | "Vue3" | "HTML" | "CSS",
-  "question": "题干（中文）",
-  "options": ["选项A","选项B", ...],
-  "answer": 数字索引 或 数字索引数组,
-  "explanation": "正确答案的简明讲解（中文，1~3 句话）"
-}
-要求：所有文字用中文；category 在五类中尽量均衡分布；解析写得简短（不超过 2 句），确保题目数量完整不被截断；只返回一个 JSON 数组。`;
-  if (part === 'single'){
-    return head + `
-本题组内容：恰好 40 道单选题（type 为 "single"），每题恰好 4 个选项（options 长度为 4），answer 为正确选项索引（从 0 开始）。
-` + fmt;
-  }
-  return head + `
-本题组内容：共 20 道题 = 10 道多选题（type 为 "multiple"，每题 3~4 个选项，answer 是"至少 2 个正确项索引"组成的数组） + 10 道判断题（type 为 "boolean"，options 固定为 ["正确","错误"]，answer 为 0 或 1）。
-` + fmt;
-}
-
-function toIndex(a){
-  if (typeof a === 'number') return a;
-  if (typeof a === 'string'){
-    const s = a.trim();
-    if (/^[0-9]+$/.test(s)) return parseInt(s,10);
-    const m = s.match(/[A-Za-z]/);
-    if (m) return m[0].toUpperCase().charCodeAt(0) - 65;
-  }
-  return -1;
-}
-function normalizeQuestion(r){
-  const type = (r && r.type || '').toLowerCase();
-  if (TYPES.indexOf(type) < 0) return null;
-  let options = Array.isArray(r.options) ? r.options.map(String) : [];
-  if (type === 'boolean') options = ['正确','错误'];
-  if (options.length < 2) return null;
-  let answer;
-  if (type === 'multiple'){
-    let arr = Array.isArray(r.answer) ? r.answer : [r.answer];
-    answer = arr.map(toIndex).filter(i=>i>=0 && i<options.length);
-    if (answer.length < 1) return null;
-    answer = Array.from(new Set(answer)).sort((a,b)=>a-b);
-  } else {
-    answer = toIndex(r.answer);
-    if (answer < 0 || answer >= options.length) return null;
-  }
-  const category = CATS.indexOf(r.category) >= 0 ? r.category : 'JS';
-  const question = String(r.question || '').trim();
-  if (!question) return null;
-  const explanation = String(r.explanation || '（无解析）').trim();
-  return { type, category, question, options, answer, explanation };
-}
-function parseAIQuestions(text){
-  let raw = text.trim();
-  // 去掉可能的 ```json ... ``` 围栏
-  raw = raw.replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');
-  let arr;
-  try { arr = JSON.parse(raw); }
-  catch(e){
-    const s = raw.indexOf('['), eIdx = raw.lastIndexOf(']');
-    if (s>=0 && eIdx>s){ try{ arr = JSON.parse(raw.slice(s, eIdx+1)); }catch(e2){ arr=null; } }
-  }
-  if (!Array.isArray(arr)) throw new Error('AI 返回的内容无法解析为题目数组');
-  const out = [];
-  for (const item of arr){ const q = normalizeQuestion(item); if (q) out.push(q); }
-  if (out.length === 0) throw new Error('AI 返回的题目全部不合规');
-  return out;
-}
-
-// 按类型上限裁剪为 40 单选 / 10 多选 / 10 判断，防止 AI 超额返回
-function normalizeRoundCounts(qs){
-  const cap = { single:40, multiple:10, boolean:10 };
-  const kept = { single:0, multiple:0, boolean:0 };
-  const out = [];
-  for (const q of qs){
-    const t = q.type;
-    if (kept[t] < cap[t]){ out.push(q); kept[t]++; }
-  }
-  return out;
-}
-
-/* 用本地题库把一轮补齐到 40 单选 / 10 多选 / 10 判断 */
-function padRoundFromBank(qs){
-  const cap = { single:40, multiple:10, boolean:10 };
-  const cnt = { single:0, multiple:0, boolean:0 };
-  for (const q of qs){ if (cnt[q.type] !== undefined) cnt[q.type]++; }
-  const need = {};
-  for (const t in cap) need[t] = Math.max(0, cap[t] - cnt[t]);
-  if (!need.single && !need.multiple && !need.boolean) return qs;
-
-  const used = new Set(qs.map(q=>hashQid(q.type, q.question)));
-  const pool = { single:[], multiple:[], boolean:[] };
-  for (const b of getBank()){
-    if (pool[b.type] && !used.has(b.qid)) pool[b.type].push(b);
-  }
-  const out = qs.slice();
-  for (const t in cap){
-    if (!need[t]) continue;
-    for (const b of shuffle(pool[t]).slice(0, need[t])){
-      out.push({ type:b.type, category:b.category, question:b.question,
-                 options:b.options.slice(), answer: Array.isArray(b.answer)?b.answer.slice():b.answer,
-                 explanation:b.explanation });
-    }
-  }
-  return out;
-}
-
-/* 分两批请求出题（40 单选 / 10 多选+10 判断），降低单次输出过长被截断的概率。
-   返回 { questions, aiCount, error }，调用方据此决定提示文案。 */
-async function generateAIQuestions(){
-  const sys = { role:'system', content:'你是资深前端面试出题官，只出基础题，输出严格 JSON 数组。' };
+async function generateAIQuestionsWithExclusions(exclusions) {
+  const sys = {
+    role: 'system',
+    content: '你是专业的前端面试出题官，只出客观基础题，输出纯 JSON 数组。'
+  };
   let qs = [];
-  let errMsg = '';
-  for (const part of ['single','many']){
-    const messages = [sys, { role:'user', content: buildPrompt(part) }];
-    for (let attempt = 0; attempt < 2; attempt++){
-      try{
-        const text = await callAI(messages);
+  let lastErr = '';
+
+  for (const part of ['single', 'many']) {
+    const prompt = buildPrompt(part, exclusions);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const text = await callAI([sys, { role: 'user', content: prompt }]);
         const got = parseAIQuestions(text);
-        const seen = new Set(qs.map(q=>hashQid(q.type, q.question)));
-        for (const q of got){
-          const h = hashQid(q.type, q.question);
-          if (!seen.has(h)){ qs.push(q); seen.add(h); }
+        for (const q of got) {
+          if (!questionMatchesExclusions(q, exclusions)) qs.push(q);
         }
-        break;                        // 本批成功
-      }catch(e){
-        errMsg = e.message;           // 记录最后一次错误
+        break;
+      } catch(e) {
+        lastErr = e.message;
       }
     }
   }
-  const aiCount = normalizeRoundCounts(qs).length;
-  if (qs.length === 0) throw new Error(errMsg || 'AI 未返回可用题目');
-  return { questions: padRoundFromBank(normalizeRoundCounts(qs)), aiCount: aiCount };
+
+  return { questions: qs, aiCount: qs.length, error: lastErr };
 }
 
-/* 从本地题库随机抽 n 道（按类型比例尽量接近 40/10/10） */
-function sampleFromBank(n){
-  const bank = getBank();
-  if (bank.length === 0) return [];
-  const byType = { single:[], multiple:[], boolean:[] };
-  for (const q of bank){ byType[q.type].push(q); }
-  const want = { single: Math.min(40, byType.single.length), multiple: Math.min(10, byType.multiple.length), boolean: Math.min(10, byType.boolean.length) };
-  // 若某类不足，用其他类补齐到 n
-  let picks = [];
-  for (const t of ['single','multiple','boolean']) picks = picks.concat(shuffle(byType[t]).slice(0, want[t]));
-  let remain = n - picks.length;
-  if (remain > 0){
-    const pool = shuffle(bank.filter(q=>!picks.includes(q)));
-    picks = picks.concat(pool.slice(0, remain));
-  }
-  return shuffle(picks).map(q=>({ type:q.type, category:q.category, question:q.question, options:q.options.slice(), answer: Array.isArray(q.answer)?q.answer.slice():q.answer, explanation:q.explanation }));
+/* ==========================================================================
+   8. 判分与错题本
+   ========================================================================== */
+function pointOf(type) { return type === 'single' ? 1.5 : 2; }
+function arraysEqual(a, b) {
+  if (!a || !b || a.length !== b.length) return false;
+  const x = a.slice().sort(), y = b.slice().sort();
+  return x.every((v, i) => v === y[i]);
 }
-
-/* ============ 判分 ============ */
-function pointOf(type){ return type==='single'?1.5 : 2; } // 多选/判断均为 2
-function arraysEqual(a,b){ if(!a||!b||a.length!==b.length) return false; const x=a.slice().sort(),y=b.slice().sort(); return x.every((v,i)=>v===y[i]); }
-function isCorrect(q, ua){
-  if (ua===null || ua===undefined) return false;
-  if (q.type==='multiple'){ return arraysEqual(ua, q.answer); }
+function isCorrect(q, ua) {
+  if (ua === null || ua === undefined) return false;
+  if (q.type === 'multiple') return arraysEqual(ua, q.answer);
   return ua === q.answer;
 }
-function computeScore(questions){
-  let score=0, total=0, wrong=0;
-  for (const q of questions){
-    const pt = pointOf(q.type); total += pt;
-    const ok = isCorrect(q, q.userAnswer);
-    if (ok) score += pt; else wrong++;
+
+function computeScore(questions) {
+  let score = 0, total = 0, wrong = 0;
+  for (const q of questions) {
+    const pt = pointOf(q.type);
+    total += pt;
+    if (isCorrect(q, q.userAnswer)) score += pt;
+    else wrong++;
   }
-  return { score:Math.round(score*10)/10, total:Math.round(total*10)/10, wrong, correct:questions.length-wrong };
+  return {
+    score: Math.round(score * 10) / 10,
+    total: Math.round(total * 10) / 10,
+    wrong,
+    correct: questions.length - wrong
+  };
 }
 
-/* ============ 错题本更新 ============ */
-function updateWrongNormal(questions){
+function updateWrongNormal(questions) {
   const w = getWrong();
-  for (const q of questions){
-    if (isCorrect(q, q.userAnswer)) continue; // 常规轮只对错的入/更新错题本
-    const e = w[q.qid] || { qid:q.qid, wrongCount:0, lastWrong:0, correctStreak:0 };
-    e.wrongCount++; e.lastWrong = Date.now(); e.correctStreak = 0;
+  for (const q of questions) {
+    if (isCorrect(q, q.userAnswer)) continue;
+    const e = w[q.qid] || { qid: q.qid, wrongCount: 0, lastWrong: 0, correctStreak: 0 };
+    e.wrongCount++;
+    e.lastWrong = Date.now();
+    e.correctStreak = 0;
     w[q.qid] = e;
   }
   save(LS.wrong, w);
 }
-function updateWrongPractice(questions){
+
+function updateWrongPractice(questions) {
   const w = getWrong();
-  for (const q of questions){
+  for (const q of questions) {
     const e = w[q.qid];
-    if (!e) continue; // 理论上都在
-    if (isCorrect(q, q.userAnswer)){
-      e.correctStreak = (e.correctStreak||0) + 1;
-      if (e.correctStreak >= 2){ delete w[q.qid]; } // 连续答对 2 次移出
+    if (!e) continue;
+    if (isCorrect(q, q.userAnswer)) {
+      e.correctStreak = (e.correctStreak || 0) + 1;
+      if (e.correctStreak >= 2) delete w[q.qid];
     } else {
-      e.wrongCount++; e.lastWrong = Date.now(); e.correctStreak = 0;
+      e.wrongCount++;
+      e.lastWrong = Date.now();
+      e.correctStreak = 0;
     }
   }
   save(LS.wrong, w);
 }
 
-/* ============ 全局状态 & 路由 ============ */
-const state = { view:'sim', param:null, current:null };
+/* ==========================================================================
+   9. 全局状态与路由调度
+   ========================================================================== */
+const state = {
+  view: 'sim',
+  param: null,
+  current: null,
+  simPage: 1,
+  pageSize: 10,
+  wrongPage: 1,
+  wrongPageSize: 20,
+  pendingDeleteId: null,
+  bankSearch: '',
+  bankCategoryFilter: 'ALL'
+};
+
 const app = document.getElementById('app');
 
-/* 用 location.hash 做路由：浏览器前进/后退可用，每个视图都进入历史记录 */
-function parseHash(){
-  const h = (location.hash||'').replace(/^#/,'');
-  if (!h) return { view:'sim', param:null };
+function parseHash() {
+  const h = (location.hash || '').replace(/^#/, '');
+  if (!h) return { view: 'sim', param: null };
   const i = h.indexOf(':');
-  if (i < 0) return { view:h, param:null };
-  return { view:h.slice(0,i), param:h.slice(i+1) };
+  if (i < 0) return { view: h, param: null };
+  return { view: h.slice(0, i), param: h.slice(i + 1) };
 }
-function go(view, param){
+
+function go(view, param) {
   const hash = param ? view + ':' + param : view;
-  if (('#' + hash) === location.hash){ render(); }
-  else { location.hash = hash; }
+  if ('#' + hash === location.hash) {
+    render();
+  } else {
+    location.hash = hash;
+  }
 }
-function onRoute(){
+
+function onRoute() {
   const r = parseHash();
-  const allowed = ['sim','bank','wrong','settings','exam','result'];
+  const allowed = ['sim', 'bank', 'wrong', 'settings', 'exam', 'result', 'coming_soon'];
   state.view = allowed.indexOf(r.view) >= 0 ? r.view : 'sim';
   state.param = r.param;
   render();
 }
 window.addEventListener('hashchange', onRoute);
 
-/* 正在答题时点其它按钮离开，弹出确认（作答已自动保存，可稍后继续） */
-function allowLeave(){
-  if (state.view === 'exam' && state.current){
-    const answered = state.current.questions.some(q => q.userAnswer !== null && (q.type !== 'multiple' || (q.userAnswer && q.userAnswer.length > 0)));
-    if (answered) return confirm('正在答题，确定离开当前页面吗？\n（你的作答已自动保存，可从「面试模拟」列表重新进入继续）');
-  }
-  return true;
+function getRound(id) {
+  return getRounds().find(r => r.roundId === id) || null;
+}
+function persistRounds() {
+  save(LS.rounds, getRounds());
 }
 
-function render(){
-  document.querySelectorAll('#nav button').forEach(b=>{
-    const v = b.dataset.view;
-    b.classList.toggle('active', v === state.view || ((state.view==='exam'||state.view==='result') && v==='sim'));
-  });
-  if (state.view==='sim') return renderSim();
-  if (state.view==='bank') return renderBank();
-  if (state.view==='wrong') return renderWrong();
-  if (state.view==='settings') return renderSettings();
-  if (state.view==='exam') return renderExam(state.param);
-  if (state.view==='result') return renderResult(state.param, true);
-}
-
-function getRound(id){ return getRounds().find(r=>r.roundId===id) || null; }
-function persistRounds(){ save(LS.rounds, getRounds()); }
-
-function createRound(kind){
-  const roundId = 'r' + Date.now() + '-' + Math.floor(Math.random()*10000);
-  const nameMap = { ai:'常规练习', bank:'题库抽题', wrongbook:'错题练习' };
-  const round = { roundId, name:(nameMap[kind]||'练习')+'-'+stamp14(), kind, source:'', status:'pending', createdAt:Date.now(), questions:[], score:null, total:null, wrong:null, correct:null, generating:false, warn:null };
-  const rounds = getRounds(); rounds.unshift(round); save(LS.rounds, rounds);
+function createRound(kind) {
+  const roundId = 'r' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+  const nameMap = {
+    ai: currentLang === 'en-US' ? 'Standard Mock' : '全真模拟',
+    bank: currentLang === 'en-US' ? 'Bank Drill' : '题库精选',
+    wrongbook: currentLang === 'en-US' ? 'Mistake Drill' : '错题突破'
+  };
+  const round = {
+    roundId,
+    name: `前端开发 · ${nameMap[kind] || '练习'}-${stamp14()}`,
+    kind,
+    source: '',
+    status: 'pending',
+    createdAt: Date.now(),
+    questions: [],
+    score: null,
+    total: null,
+    wrong: null,
+    correct: null,
+    generating: false,
+    track: 'frontend'
+  };
+  const rounds = getRounds();
+  rounds.unshift(round);
+  save(LS.rounds, rounds);
   return round;
 }
 
-function renderSim(){
-  const bank=getBank(), rounds=getRounds(), wrong=getWrong();
-  const wrongCount = Object.keys(wrong).length;
-  const provider = normalizeProvider(getSettings().provider);
-  const isLocal = !!PROVIDER_PRESETS[provider].local;
-  const items = rounds.map(r=>{
-    let badge;
-    if (r.generating) badge = '<span class="pill" style="background:#f1f5f9;color:#475569">生成中…</span>';
-    else if (r.status==='done') badge = '<span class="pill normal">已交卷 · ' + (r.total>0?Math.round(r.score/r.total*100):0) + '%</span>';
-    else badge = '<span class="pill" style="background:#fffbeb;color:#d97706">未作答</span>';
-    const meta = r.generating ? '题目生成中…' : (r.status==='done' ? ('正确 '+r.correct+' / 错误 '+r.wrong+' · 得分率 '+(r.total>0?Math.round(r.score/r.total*100):0)+'%') : '尚未交卷');
-    return '<div class="list-item" data-id="'+r.roundId+'"><div><b>'+escapeHtml(r.name)+'</b><div class="meta">'+fmtTime(r.createdAt)+' · '+escapeHtml(r.source||'')+' · '+meta+'</div></div>'+badge+'</div>';
-  }).join('');
-  app.innerHTML = `
-    <div class="card">
-      <h2 style="margin-top:0">面试模拟</h2>
-      <p class="muted">每轮 = 40 单选 + 10 多选 + 10 判断 = 60 题。点「生成新一轮」即生成一组并放入下方列表（无需等待）；点列表里的任意一组即可答题，作答进度自动保存，随时可重新答题。</p>
-      <div class="row">
-        <button class="btn" id="genNew">生成新一轮${isLocal?'（本地题库）':'（AI 出题）'}</button>
-        <button class="btn ghost" id="wrongPractice">错题本练习</button>
-        <button class="btn soft" id="bankRound">从题库随机抽一组</button>
-      </div>
-      <div class="stats">
-        <div class="stat"><b>${bank.length}</b><span>本地题库</span></div>
-        <div class="stat"><b>${wrongCount}</b><span>错题本</span></div>
-        <div class="stat"><b>${rounds.filter(r=>!r.generating).length}</b><span>已生成组数</span></div>
-      </div>
-      <p class="hint" style="margin-top:6px">${USE_SERVER ? '✅ 已连接本地服务，数据自动保存到本目录 data.json（清缓存/换电脑都不丢）' : '⚠️ 当前为浏览器缓存模式（直接双击打开）。建议用 <code>node server.js</code> 启动，数据会自动落盘到 data.json。'}</p>
-      <p class="hint">当前出题来源：<b>${escapeHtml(PROVIDER_PRESETS[provider].label)}</b> ｜ 到「设置/AI」可切换。AI 失败会自动用本地题库兜底。</p>
-    </div>
-    <div class="card"><h3 style="margin-top:0">我的练习组（全部保留，不删除）</h3>
-      ${rounds.length ? items : '<div class="muted">还没有练习组。点上面的「生成新一轮」开始吧。</div>'}
-    </div>`;
-  document.getElementById('genNew').onclick = generateNewRound;
-  document.getElementById('wrongPractice').onclick = startWrongRound;
-  document.getElementById('bankRound').onclick = createBankRound;
-  app.querySelectorAll('.list-item').forEach(el=>{ el.onclick = ()=> openRound(el.dataset.id); });
+function deleteRound(roundId) {
+  let rounds = getRounds();
+  rounds = rounds.filter(r => r.roundId !== roundId);
+  save(LS.rounds, rounds);
+  toast(t('toastDeleted'));
+  render();
 }
 
-function generateNewRound(){
-  const provider = normalizeProvider(getSettings().provider);
+/* ==========================================================================
+   10. 视图渲染 (View Renderers)
+   ========================================================================== */
+function render() {
+  document.querySelectorAll('#nav button').forEach(b => {
+    const v = b.dataset.view;
+    const isAct = v === state.view || ((state.view === 'exam' || state.view === 'result') && v === 'sim');
+    b.classList.toggle('active', isAct);
+  });
+
+  document.querySelectorAll('.role-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.role === selectedRoleId);
+  });
+
+  if (selectedRoleId !== 'frontend') {
+    return renderComingSoon(selectedRoleId);
+  }
+
+  if (state.view === 'sim') return renderSim();
+  if (state.view === 'bank') return renderBank();
+  if (state.view === 'wrong') return renderWrong();
+  if (state.view === 'settings') return renderSettings();
+  if (state.view === 'exam') return renderExam(state.param);
+  if (state.view === 'result') return renderResult(state.param);
+  if (state.view === 'coming_soon') return renderComingSoon(state.param || selectedRoleId);
+}
+
+function renderComingSoon(roleId) {
+  const role = ROLES.find(r => r.id === roleId) || ROLES[1];
+  const roleName = currentLang === 'en-US' ? role.nameEn : role.nameZh;
+  const desc = (currentLang === 'en-US' ? role.descEn : role.descZh) || t('comingSoonDesc');
+
+  app.innerHTML = `
+    <div class="coming-soon-card">
+      <div class="coming-soon-icon">🚀</div>
+      <h2 style="margin:0 0 12px 0">${t('comingSoonTitle', { role: roleName })}</h2>
+      <p class="muted" style="max-width:540px;margin:0 auto 24px auto;font-size:14px;line-height:1.7">
+        ${desc}
+      </p>
+      <div class="row" style="justify-content:center">
+        <button class="btn" id="btnBackToFe">⚡ ${t('btnBackToFrontend')}</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btnBackToFe').onclick = () => switchRole('frontend');
+}
+
+function switchRole(roleId) {
+  selectedRoleId = roleId;
+  if (roleId === 'frontend') go('sim');
+  else render();
+}
+
+/* --- 10.1 面试模拟视图 (Sim) - 已删除“错题本专项突破”按钮 --- */
+function renderSim() {
+  const bank = getBank();
+  const rounds = getRounds();
+  const wrong = getWrong();
+  const wrongCount = Object.keys(wrong).length;
+  const settings = getSettings();
+  const exclusions = settings.exclusions || [];
+
+  const pageSize = state.pageSize;
+  const totalRounds = rounds.length;
+  const totalPages = Math.max(1, Math.ceil(totalRounds / pageSize));
+  if (state.simPage > totalPages) state.simPage = totalPages;
+  const startIdx = (state.simPage - 1) * pageSize;
+  const pageRounds = rounds.slice(startIdx, startIdx + pageSize);
+
+  let roundItemsHtml = '';
+  if (pageRounds.length === 0) {
+    roundItemsHtml = `<div class="muted" style="text-align:center;padding:14px 0;font-size:13px">${t('practiceSetsEmpty')}</div>`;
+  } else {
+    roundItemsHtml = pageRounds.map(r => {
+      let badgeHtml = '';
+      if (r.generating) {
+        badgeHtml = `<span class="pill pending">${t('roundGenerating')}</span>`;
+      } else if (r.status === 'done') {
+        const pct = r.total > 0 ? Math.round(r.score / r.total * 100) : 0;
+        badgeHtml = `<span class="pill normal">${t('roundDone', { pct })}</span>`;
+      } else {
+        badgeHtml = `<span class="pill pending">${t('roundNotAnswered')}</span>`;
+      }
+
+      const metaDesc = r.generating
+        ? t('roundGenerating')
+        : (r.status === 'done'
+            ? t('roundCorrectStats', {
+                correct: r.correct,
+                wrong: r.wrong,
+                pct: r.total > 0 ? Math.round(r.score / r.total * 100) : 0
+              })
+            : t('roundNotAnswered'));
+
+      return `
+        <div class="round-item" data-id="${r.roundId}">
+          <div class="round-content">
+            <div class="round-title">
+              <span>${escapeHtml(r.name)}</span>
+              ${badgeHtml}
+            </div>
+            <div class="round-meta">
+              <span>⏱ ${fmtTime(r.createdAt)}</span>
+              <span>🏷 ${escapeHtml(r.source || 'AI 出题')}</span>
+              <span>📊 ${metaDesc}</span>
+            </div>
+          </div>
+          <div class="round-actions">
+            <button class="del-btn" data-del="${r.roundId}" title="${t('btnDelete')}">🗑️</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  let paginationHtml = '';
+  if (totalPages > 1) {
+    let pageNumbersHtml = '';
+    for (let p = 1; p <= totalPages; p++) {
+      pageNumbersHtml += `<button class="page-num ${p === state.simPage ? 'active' : ''}" data-page="${p}">${p}</button>`;
+    }
+    paginationHtml = `
+      <div class="pagination-bar">
+        <div>${t('pageInfo', { current: state.simPage, total: totalPages, count: totalRounds })}</div>
+        <div class="page-btns">
+          <button class="btn soft sm" id="prevPage" ${state.simPage <= 1 ? 'disabled' : ''}>${t('pagePrev')}</button>
+          ${pageNumbersHtml}
+          <button class="btn soft sm" id="nextPage" ${state.simPage >= totalPages ? 'disabled' : ''}>${t('pageNext')}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // 首页排除按钮：和题库分类保持完全一致
+  const quickChips = STANDARD_CATEGORIES.map(chip => {
+    const isAct = exclusions.some(x => x.toLowerCase() === chip.toLowerCase());
+    return `<div class="exclusion-chip ${isAct ? 'active' : ''}" data-chip="${escapeHtml(chip)}">${escapeHtml(chip)}</div>`;
+  }).join('');
+
+  const activeTagsHtml = exclusions.map(ex => `
+    <span class="tag-pill">
+      <span>❌ ${escapeHtml(ex)}</span>
+      <span class="remove-btn" data-remove-ex="${escapeHtml(ex)}" title="移除">×</span>
+    </span>
+  `).join('');
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h2 style="margin:0 0 4px 0">${t('simTitle')}</h2>
+          <p class="muted" style="margin:0">${t('simDesc')}</p>
+        </div>
+      </div>
+
+      <!-- 排除法控制台 -->
+      <div class="scope-panel">
+        <div class="scope-header">
+          <h4>🎯 ${t('scopeTitle')}</h4>
+          ${exclusions.length > 0 ? `<a href="javascript:void(0)" id="clearExclusions" style="font-size:12px;color:var(--bad)">${t('clearExclusions')}</a>` : ''}
+        </div>
+        <div class="muted" style="font-size:12px">${t('scopeSubtitle')}</div>
+        <div class="exclusion-chips">${quickChips}</div>
+        <div class="exclusion-input-row">
+          <input type="text" id="customExclusionInput" placeholder="${t('addExclusionPlaceholder')}" />
+          <button class="btn soft sm" id="btnAddExclusion">${t('btnAddExclusion')}</button>
+        </div>
+        <div class="row" style="margin-top:10px;gap:6px">
+          ${exclusions.length > 0 ? activeTagsHtml : `<span class="muted" style="font-size:12px">${t('noExclusionsActive')}</span>`}
+        </div>
+      </div>
+
+      <!-- 首页操作行：已根据要求删除“错题本专项突破” -->
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="genNew">🚀 ${t('btnGenNew')}（AI 实时生成）</button>
+        <button class="btn soft" id="bankRound">🎲 ${t('btnSampleBank')}</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <b>${bank.length}</b>
+          <span>${t('statLocalBank')}</span>
+        </div>
+        <div class="stat-box">
+          <b>${wrongCount}</b>
+          <span>${t('statWrongBook')}</span>
+        </div>
+        <div class="stat-box">
+          <b>${rounds.length}</b>
+          <span>${t('statRoundsCount')}</span>
+        </div>
+      </div>
+
+      <p class="hint" style="margin-top:10px;font-size:11px">
+        ⚡ <b>EasyOffer 极简架构</b>：题库纯本地存储，点击「生成新一轮」即可使用 AI 自动扩充题库。当前出题通道：<b>${escapeHtml(PROVIDER_PRESETS[normalizeProvider(settings.provider)].label.split('（')[0])}</b>
+      </p>
+    </div>
+
+    <!-- 我的练习组列表 -->
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;font-size:15px">${t('practiceSetsTitle')}</h3>
+      ${roundItemsHtml}
+      ${paginationHtml}
+    </div>
+  `;
+
+  document.getElementById('genNew').onclick = generateNewRound;
+  document.getElementById('bankRound').onclick = createBankRound;
+
+  app.querySelectorAll('.exclusion-chip').forEach(el => {
+    el.onclick = () => toggleExclusion(el.dataset.chip);
+  });
+  app.querySelectorAll('[data-remove-ex]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      removeExclusion(el.dataset.removeEx);
+    };
+  });
+  const customExInp = document.getElementById('customExclusionInput');
+  const addExBtn = document.getElementById('btnAddExclusion');
+  const doAddEx = () => {
+    const val = customExInp.value.trim();
+    if (val) {
+      addExclusion(val);
+      customExInp.value = '';
+    }
+  };
+  addExBtn.onclick = doAddEx;
+  customExInp.onkeydown = (e) => { if (e.key === 'Enter') doAddEx(); };
+  const clearExLink = document.getElementById('clearExclusions');
+  if (clearExLink) {
+    clearExLink.onclick = () => {
+      const s = getSettings();
+      s.exclusions = [];
+      save(LS.settings, s);
+      toast(t('toastExclusionCleared'));
+      renderSim();
+    };
+  }
+
+  app.querySelectorAll('.round-content').forEach(el => {
+    el.onclick = () => {
+      const p = el.closest('.round-item');
+      if (p) openRound(p.dataset.id);
+    };
+  });
+
+  app.querySelectorAll('.del-btn').forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const roundId = b.dataset.del;
+      const r = getRound(roundId);
+      if (r) {
+        state.pendingDeleteId = roundId;
+        document.getElementById('confirmModalText').textContent = t('confirmDelMsg', { name: r.name });
+        document.getElementById('confirmModal').classList.add('open');
+      }
+    };
+  });
+
+  const prevBtn = document.getElementById('prevPage');
+  if (prevBtn) prevBtn.onclick = () => { if (state.simPage > 1) { state.simPage--; renderSim(); } };
+  const nextBtn = document.getElementById('nextPage');
+  if (nextBtn) nextBtn.onclick = () => { if (state.simPage < totalPages) { state.simPage++; renderSim(); } };
+  app.querySelectorAll('.page-num').forEach(p => {
+    p.onclick = () => {
+      state.simPage = parseInt(p.dataset.page, 10);
+      renderSim();
+    };
+  });
+}
+
+function toggleExclusion(term) {
+  const s = getSettings();
+  let ex = s.exclusions || [];
+  const idx = ex.findIndex(x => x.toLowerCase() === term.toLowerCase());
+  if (idx >= 0) ex.splice(idx, 1);
+  else ex.push(term);
+  s.exclusions = ex;
+  save(LS.settings, s);
+  renderSim();
+}
+
+function addExclusion(term) {
+  const s = getSettings();
+  let ex = s.exclusions || [];
+  if (!ex.some(x => x.toLowerCase() === term.toLowerCase())) {
+    ex.push(term);
+    s.exclusions = ex;
+    save(LS.settings, s);
+    toast(t('toastExclusionAdded', { name: term }));
+    renderSim();
+  }
+}
+
+function removeExclusion(term) {
+  const s = getSettings();
+  let ex = s.exclusions || [];
+  s.exclusions = ex.filter(x => x.toLowerCase() !== term.toLowerCase());
+  save(LS.settings, s);
+  renderSim();
+}
+
+function generateNewRound() {
   const round = createRound('ai');
-  round.source = PROVIDER_PRESETS[provider].local ? '本地题库' : 'AI 出题';
+  round.source = 'AI 实时出题';
   round.generating = true;
   persistRounds();
-  renderSim();                       // 立即把这一组插到列表（显示“生成中”），无需等待
-  (async ()=>{
-    let qs, source = round.source, warn = null;
-    try{
-      if (PROVIDER_PRESETS[provider].local){ qs = sampleFromBank(60); source = '本地题库'; }
-      else {
-        const r = await generateAIQuestions();
-        qs = r.questions; source = 'AI 出题';
-        const added = addToBank(qs);
-        if (added > 0) toast('新题已入库 ' + added + ' 道');
+  renderSim();
+
+  const exclusions = getSettings().exclusions || [];
+
+  (async () => {
+    let qs = [], source = 'AI 实时出题', warn = null;
+    try {
+      const r = await generateAIQuestionsWithExclusions(exclusions);
+      qs = r.questions;
+      if (qs.length === 0) throw new Error(r.error || 'AI 未返回题目，请检查网络或更换模型');
+      const added = addToBank(qs);
+      if (added > 0) toast(`AI 新题已自动存入你的本地题库 ${added} 道`);
+    } catch(e) {
+      // 若 AI 失败且本地题库有题，尝试抽题兜底；若本地也无题，提示用户配置 Key
+      qs = sampleFromBank(60, exclusions);
+      if (qs.length === 0) qs = sampleFromBank(60, []);
+      if (qs.length > 0) {
+        source = '本地题库 (AI 兜底)';
+        warn = e.message;
+      } else {
+        toast('出题失败：' + e.message + '，请在「设置/AI」中检查配置');
+        warn = e.message;
       }
-    }catch(e){ qs = sampleFromBank(60); source = '本地题库（AI 失败）'; warn = e.message; }
-    qs = qs.map(q=>({
-      type:q.type, category:q.category, question:q.question,
-      options:q.options.slice(), answer:Array.isArray(q.answer)?q.answer.slice():q.answer,
-      explanation:q.explanation, qid:q.qid || hashQid(q.type, q.question), userAnswer:null
+    }
+
+    qs = qs.map(q => ({
+      type: q.type,
+      category: q.category,
+      question: q.question,
+      options: q.options.slice(),
+      answer: Array.isArray(q.answer) ? q.answer.slice() : q.answer,
+      explanation: q.explanation,
+      qid: q.qid || hashQid(q.type, q.question),
+      userAnswer: null
     }));
+
     const rounds = getRounds();
-    const idx = rounds.findIndex(x=>x.roundId===round.roundId);
-    if (idx >= 0){ rounds[idx].questions = qs; rounds[idx].source = source; rounds[idx].generating = false; rounds[idx].warn = warn; persistRounds(); }
+    const idx = rounds.findIndex(x => x.roundId === round.roundId);
+    if (idx >= 0) {
+      rounds[idx].questions = qs;
+      rounds[idx].source = source;
+      rounds[idx].generating = false;
+      rounds[idx].warn = warn;
+      persistRounds();
+    }
     if (state.view === 'sim') renderSim();
   })();
 }
 
-function createBankRound(){
-  const qs = sampleFromBank(60);
-  if (qs.length === 0){ toast('题库为空，请先生成几轮'); return; }
-  const qs2 = qs.map(q=>({ type:q.type, category:q.category, question:q.question, options:q.options.slice(), answer:Array.isArray(q.answer)?q.answer.slice():q.answer, explanation:q.explanation, qid:q.qid || hashQid(q.type, q.question), userAnswer:null }));
+function createBankRound() {
+  const exclusions = getSettings().exclusions || [];
+  let qs = sampleFromBank(60, exclusions);
+  if (qs.length === 0) qs = sampleFromBank(60, []);
+  if (qs.length === 0) {
+    toast('本地题库暂无题目，请点击「生成新一轮」先让 AI 生成题目！');
+    return;
+  }
+  const qs2 = qs.map(q => ({
+    type: q.type,
+    category: q.category,
+    question: q.question,
+    options: q.options.slice(),
+    answer: Array.isArray(q.answer) ? q.answer.slice() : q.answer,
+    explanation: q.explanation,
+    qid: q.qid || hashQid(q.type, q.question),
+    userAnswer: null
+  }));
   const round = createRound('bank');
-  round.questions = qs2; round.source = '本地题库';
+  round.questions = qs2;
+  round.source = '本地题库';
   persistRounds();
   go('exam', round.roundId);
 }
 
-function startWrongRound(){
+function startWrongRound() {
   const w = getWrong();
   const ids = Object.keys(w);
-  if (ids.length === 0){ toast('错题本还是空的，先去做几轮常规练习吧'); return; }
-  let qs = ids.map(id=>getFromBank(id)).filter(Boolean)
-    .map(q=>({ type:q.type, category:q.category, question:q.question, options:q.options.slice(), answer:Array.isArray(q.answer)?q.answer.slice():q.answer, explanation:q.explanation, qid:q.qid, userAnswer:null }));
-  if (qs.length > 60) qs = shuffle(qs).slice(0,60);
+  if (ids.length === 0) { toast(t('wrongEmpty')); return; }
+  let qs = ids.map(id => getFromBank(id)).filter(Boolean)
+    .map(q => ({
+      type: q.type,
+      category: q.category,
+      question: q.question,
+      options: q.options.slice(),
+      answer: Array.isArray(q.answer) ? q.answer.slice() : q.answer,
+      explanation: q.explanation,
+      qid: q.qid,
+      userAnswer: null
+    }));
+  if (qs.length > 60) qs = shuffle(qs).slice(0, 60);
   const round = createRound('wrongbook');
-  round.questions = qs; round.source = '错题本';
+  round.questions = qs;
+  round.source = '错题本';
   persistRounds();
   go('exam', round.roundId);
 }
 
-function openRound(roundId){
+function openRound(roundId) {
   const round = getRound(roundId);
-  if (!round){ toast('该组不存在'); return; }
-  if (round.generating){ toast('题目还在生成中，请稍候…'); return; }
-  if (round.status === 'done'){ go('result', roundId); return; }
+  if (!round) { toast('练习组不存在'); return; }
+  if (round.generating) { toast(t('roundGenerating')); return; }
+  if (round.status === 'done') { go('result', roundId); return; }
   go('exam', roundId);
 }
 
-function renderExam(roundId){
+/* --- 10.2 模拟考场视图 (Exam) --- */
+function renderExam(roundId) {
   const round = getRound(roundId);
-  if (!round){ app.innerHTML = '<div class="card muted">未找到该组。</div>'; return; }
-  if (round.generating){
-    app.innerHTML = '<div class="loading"><div class="spinner"></div>题目生成中，请稍候…</div><div class="row"><button class="btn soft" id="backList">返回列表</button></div>';
-    const b = document.getElementById('backList'); if (b) b.onclick = ()=>go('sim');
+  if (!round) {
+    app.innerHTML = `<div class="card muted">未找到该考试组。</div>`;
     return;
   }
+  if (round.generating) {
+    app.innerHTML = `
+      <div class="loading"><div class="spinner"></div>${t('roundGenerating')}</div>
+      <div class="row"><button class="btn soft" id="backList">${t('btnBackList')}</button></div>
+    `;
+    const b = document.getElementById('backList');
+    if (b) b.onclick = () => go('sim');
+    return;
+  }
+
   state.current = round;
-  const list = round.questions.map((q,i)=>{
-    const badge = q.type==='single'?'单选':q.type==='multiple'?'多选':'判断';
-    const opts = q.options.map((o,j)=>{
-      const inpType = q.type==='multiple'?'checkbox':'radio';
-      const nameAttr = 'opt'+i;
-      const checked = q.type==='multiple' ? (Array.isArray(q.userAnswer) && q.userAnswer.indexOf(j)>=0) : (q.userAnswer===j);
-      return `<label class="opt"><input type="${inpType}" name="${nameAttr}" data-q="${i}" data-o="${j}" ${checked?'checked':''} ${q.type==='multiple'?'':'value="'+j+'"'}/> <span>${String.fromCharCode(65+j)}. ${escapeHtml(o)}</span></label>`;
+  const answeredCount = round.questions.filter(q => q.userAnswer !== null && (q.type !== 'multiple' || (q.userAnswer && q.userAnswer.length > 0))).length;
+  const totalCount = round.questions.length;
+  const progressPct = totalCount > 0 ? Math.round(answeredCount / totalCount * 100) : 0;
+
+  const listHtml = round.questions.map((q, i) => {
+    const badgeText = q.type === 'single'
+      ? (currentLang === 'en-US' ? 'Single' : '单选题')
+      : (q.type === 'multiple' ? (currentLang === 'en-US' ? 'Multiple' : '多选题') : (currentLang === 'en-US' ? 'Boolean' : '判断题'));
+
+    const optsHtml = q.options.map((o, j) => {
+      const isSelected = q.type === 'multiple'
+        ? (Array.isArray(q.userAnswer) && q.userAnswer.indexOf(j) >= 0)
+        : (q.userAnswer === j);
+
+      return `
+        <div class="opt ${isSelected ? 'selected' : ''}" data-q="${i}" data-o="${j}">
+          <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
+          <span class="opt-text">${escapeHtml(o)}</span>
+        </div>
+      `;
     }).join('');
-    return `<div class="q"><div class="badges"><span class="badge t-${q.type}">${badge}</span><span class="badge cat">${q.category}</span></div>
-      <div class="stem">${escapeHtml(q.question)}</div>${opts}</div>`;
-  }).join('');
-  app.innerHTML = `
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <div><b>${escapeHtml(round.name)}</b> ${round.kind==='wrongbook'?'<span class="pill wrongbook">错题练习</span>':''} ${round.source?`<span class="badge cat">${escapeHtml(round.source)}</span>`:''} <a href="javascript:void(0)" id="exitExam" style="margin-left:10px;font-size:13px;color:var(--brand)">← 返回列表</a></div>
-        <div class="progress" id="prog">已答 0 / ${round.questions.length}</div>
+
+    return `
+      <div class="q" id="qitem_${i}">
+        <div class="badges">
+          <span class="badge t-${q.type}">${badgeText}</span>
+          <span class="badge cat">${escapeHtml(q.category)}</span>
+        </div>
+        <div class="stem">${escapeHtml(q.question)}</div>
+        ${optsHtml}
       </div>
-      <button class="btn" id="submitBtn">交卷</button>
+    `;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="exam-toolbar">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <b>${escapeHtml(round.name)}</b>
+          <a href="javascript:void(0)" id="exitExam" style="margin-left:12px;font-size:13px;color:var(--brand)">${t('examExit')}</a>
+        </div>
+        <div class="row">
+          <span id="examProgressText" style="font-size:13px;color:var(--text-secondary);font-family:var(--font-mono)">
+            ${t('examProgress', { answered: answeredCount, total: totalCount })}
+          </span>
+          <button class="btn sm" id="submitExamTop">${t('btnSubmitExam')}</button>
+        </div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar-fill" id="examProgressBar" style="width:${progressPct}%"></div>
+      </div>
     </div>
-    <div id="qlist">${list}</div>
-    <div class="card" style="text-align:center"><button class="btn" id="submitBtnBottom">交卷</button></div>`;
-  app.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(inp=>{
-    inp.addEventListener('change', ()=>{
-      const i = +inp.dataset.q, j = +inp.dataset.o;
-      const q = round.questions[i];
-      if (q.type==='multiple'){
-        const set = new Set(Array.isArray(q.userAnswer)?q.userAnswer:[]);
-        if (inp.checked) set.add(j); else set.delete(j);
-        q.userAnswer = Array.from(set).sort((a,b)=>a-b);
-      } else {
-        q.userAnswer = j;
-        app.querySelectorAll(`input[name="opt${i}"]`).forEach(o=>{ if (+o.dataset.o !== j) o.checked = false; });
-      }
-      persistRounds();           // 作答实时落盘，离开后可继续
-      updateProgress();
-    });
+
+    <div class="muted" style="margin-bottom:14px;font-size:12px">
+      ${t('examShortcuts')}
+    </div>
+
+    <div id="examQuestionsList">${listHtml}</div>
+
+    <div class="card" style="text-align:center;margin-top:24px">
+      <button class="btn" id="submitExamBottom" style="padding:12px 32px;font-size:16px">🎯 ${t('btnSubmitExam')}</button>
+    </div>
+  `;
+
+  app.querySelectorAll('.opt').forEach(optEl => {
+    optEl.onclick = () => {
+      const qIdx = parseInt(optEl.dataset.q, 10);
+      const oIdx = parseInt(optEl.dataset.o, 10);
+      handleSelectOption(qIdx, oIdx);
+    };
   });
-  document.getElementById('submitBtn').onclick = submitExam;
-  document.getElementById('submitBtnBottom').onclick = submitExam;
-  const ex = document.getElementById('exitExam'); if (ex) ex.onclick = ()=>{ if(!allowLeave()) return; go('sim'); };
-  updateProgress();
-}
-function updateProgress(){
-  const cur = state.current; if(!cur) return;
-  const n = cur.questions.filter(q=>q.userAnswer!==null && (q.type!=='multiple' || (q.userAnswer&&q.userAnswer.length>0))).length;
-  const p = document.getElementById('prog'); if(p) p.textContent = '已答 '+n+' / '+cur.questions.length;
+
+  document.getElementById('submitExamTop').onclick = submitExam;
+  document.getElementById('submitExamBottom').onclick = submitExam;
+  document.getElementById('exitExam').onclick = () => go('sim');
+
+  setupExamKeyboardListener();
 }
 
-function submitExam(){
+function handleSelectOption(qIdx, oIdx) {
+  const round = state.current;
+  if (!round) return;
+  const q = round.questions[qIdx];
+  if (!q) return;
+
+  if (q.type === 'multiple') {
+    let cur = Array.isArray(q.userAnswer) ? q.userAnswer.slice() : [];
+    const existIdx = cur.indexOf(oIdx);
+    if (existIdx >= 0) cur.splice(existIdx, 1);
+    else cur.push(oIdx);
+    q.userAnswer = cur.sort((a, b) => a - b);
+  } else {
+    q.userAnswer = oIdx;
+  }
+
+  persistRounds();
+
+  const qContainer = document.getElementById('qitem_' + qIdx);
+  if (qContainer) {
+    qContainer.querySelectorAll('.opt').forEach(el => {
+      const thisO = parseInt(el.dataset.o, 10);
+      const isSel = q.type === 'multiple'
+        ? (Array.isArray(q.userAnswer) && q.userAnswer.indexOf(thisO) >= 0)
+        : (q.userAnswer === thisO);
+      el.classList.toggle('selected', isSel);
+    });
+  }
+
+  const answeredCount = round.questions.filter(item => item.userAnswer !== null && (item.type !== 'multiple' || (item.userAnswer && item.userAnswer.length > 0))).length;
+  const totalCount = round.questions.length;
+  const pct = totalCount > 0 ? Math.round(answeredCount / totalCount * 100) : 0;
+  const pText = document.getElementById('examProgressText');
+  if (pText) pText.textContent = t('examProgress', { answered: answeredCount, total: totalCount });
+  const pBar = document.getElementById('examProgressBar');
+  if (pBar) pBar.style.width = pct + '%';
+}
+
+function setupExamKeyboardListener() {
+  if (window._examKeyHandler) window.removeEventListener('keydown', window._examKeyHandler);
+  window._examKeyHandler = (e) => {
+    if (state.view !== 'exam' || !state.current) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      submitExam();
+    }
+  };
+  window.addEventListener('keydown', window._examKeyHandler);
+}
+
+function submitExam() {
   const round = state.current;
   if (!round) return;
   const sc = computeScore(round.questions);
   round.status = 'done';
-  round.score = sc.score; round.total = sc.total; round.wrong = sc.wrong; round.correct = sc.correct;
+  round.score = sc.score;
+  round.total = sc.total;
+  round.wrong = sc.wrong;
+  round.correct = sc.correct;
   persistRounds();
-  if (round.kind === 'wrongbook') updateWrongPractice(round.questions); else updateWrongNormal(round.questions);
+
+  if (round.kind === 'wrongbook') updateWrongPractice(round.questions);
+  else updateWrongNormal(round.questions);
+
   state.current = null;
   go('result', round.roundId);
 }
 
-function renderResult(roundId){
+/* --- 10.3 成绩报告视图 (Result) --- */
+function renderResult(roundId) {
   const round = getRound(roundId);
-  if (!round){ app.innerHTML = '<div class="card muted">未找到该组。</div>'; return; }
-  const pct = round.total>0 ? Math.round(round.score/round.total*100) : 0;
-  const items = round.questions.map(q=>{
-    const badge = q.type==='single'?'单选':q.type==='multiple'?'多选':'判断';
+  if (!round) {
+    app.innerHTML = `<div class="card muted">未找到报告。</div>`;
+    return;
+  }
+  const pct = round.total > 0 ? Math.round(round.score / round.total * 100) : 0;
+
+  const itemsHtml = round.questions.map((q, i) => {
+    const badgeText = q.type === 'single' ? '单选' : q.type === 'multiple' ? '多选' : '判断';
     const ok = isCorrect(q, q.userAnswer);
-    const opts = q.options.map((o,j)=>{
-      const isAns = Array.isArray(q.answer)? q.answer.indexOf(j)>=0 : q.answer===j;
-      const isUser = Array.isArray(q.userAnswer)? q.userAnswer.indexOf(j)>=0 : q.userAnswer===j;
+
+    const optsHtml = q.options.map((o, j) => {
+      const isAns = Array.isArray(q.answer) ? q.answer.indexOf(j) >= 0 : q.answer === j;
+      const isUser = Array.isArray(q.userAnswer) ? q.userAnswer.indexOf(j) >= 0 : q.userAnswer === j;
       let cls = '';
-      if (isAns) cls='correct';
-      else if (isUser) cls='wrong';
-      return `<div class="opt ${cls}"><span>${String.fromCharCode(65+j)}. ${escapeHtml(o)}</span>${isAns?' <b style="color:var(--ok)">✓正确答案</b>':''}${isUser&&!isAns?' <b style="color:var(--bad)">✗你的选择</b>':''}</div>`;
+      if (isAns) cls = 'correct';
+      else if (isUser) cls = 'wrong';
+
+      return `
+        <div class="opt ${cls}">
+          <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
+          <span class="opt-text">${escapeHtml(o)}</span>
+          ${isAns ? `<b style="color:var(--ok);font-size:12px;margin-left:auto">✓ 正确答案</b>` : ''}
+          ${isUser && !isAns ? `<b style="color:var(--bad);font-size:12px;margin-left:auto">✗ 你的选择</b>` : ''}
+        </div>
+      `;
     }).join('');
-    const uaText = q.type==='multiple'
-      ? (q.userAnswer&&q.userAnswer.length? q.userAnswer.map(k=>String.fromCharCode(65+k)).join('、') : '未作答')
-      : (q.userAnswer!==null&&q.userAnswer!==undefined? String.fromCharCode(65+q.userAnswer) : '未作答');
-    return `<div class="q"><div class="badges"><span class="badge t-${q.type}">${badge}</span><span class="badge cat">${q.category}</span>${ok?'<span class="pill normal">答对</span>':'<span class="pill wrongbook">答错</span>'}</div>
-      <div class="stem">${escapeHtml(q.question)}</div>${opts}
-      <div class="yourans">你的答案：<span class="${ok?'':''}">${uaText}</span>　正确答案：${Array.isArray(q.answer)? q.answer.map(k=>String.fromCharCode(65+k)).join('、') : String.fromCharCode(65+q.answer)}</div>
-      <div class="explain">讲解：${escapeHtml(q.explanation)}</div></div>`;
+
+    const uaText = q.type === 'multiple'
+      ? (q.userAnswer && q.userAnswer.length ? q.userAnswer.map(k => String.fromCharCode(65 + k)).join('、') : '未作答')
+      : (q.userAnswer !== null && q.userAnswer !== undefined ? String.fromCharCode(65 + q.userAnswer) : '未作答');
+
+    const ansText = Array.isArray(q.answer) ? q.answer.map(k => String.fromCharCode(65 + k)).join('、') : String.fromCharCode(65 + q.answer);
+
+    return `
+      <div class="q">
+        <div class="badges">
+          <span class="badge t-${q.type}">${badgeText}</span>
+          <span class="badge cat">${escapeHtml(q.category)}</span>
+          ${ok ? `<span class="pill normal">${t('ansCorrectPill')}</span>` : `<span class="pill wrongbook">${t('ansWrongPill')}</span>`}
+        </div>
+        <div class="stem">${escapeHtml(q.question)}</div>
+        ${optsHtml}
+        <div class="yourans">
+          ${t('labelYourAns')}：<span style="font-weight:600;color:${ok ? 'var(--ok)' : 'var(--bad)'}">${uaText}</span>
+          　｜　${t('labelCorrectAns')}：<span style="font-weight:600;color:var(--ok)">${ansText}</span>
+        </div>
+        <div class="explain">💡 ${t('labelExplanation')}：${escapeHtml(q.explanation)}</div>
+      </div>
+    `;
   }).join('');
+
   app.innerHTML = `
-    <div class="card" style="text-align:center">
-      <div class="score-big">${round.score} <span style="font-size:18px;color:var(--muted)">/ ${round.total}</span></div>
-      <div class="muted">正确 ${round.correct} · 错误 ${round.wrong} · 得分率 ${pct}%${round.kind==='wrongbook'?' · 错题练习':''}</div>
-      <div class="row" style="justify-content:center;margin-top:14px">
-        <button class="btn" id="retry">重新答题</button>
-        <button class="btn ghost" id="toWrong">去看错题本</button>
-        <button class="btn soft" id="backList">返回列表</button>
+    <div class="card score-hero">
+      <div class="score-big">${round.score} <span style="font-size:22px;color:var(--text-muted)">/ ${round.total}</span></div>
+      <div class="muted" style="margin-top:6px;font-size:14px">
+        ${t('roundCorrectStats', { correct: round.correct, wrong: round.wrong, pct })}
+      </div>
+      <div class="row" style="justify-content:center;margin-top:20px">
+        <button class="btn" id="retryRound">🔄 ${t('btnRetryExam')}</button>
+        <button class="btn ghost" id="toWrongBook">💡 ${t('btnToWrong')}</button>
+        <button class="btn soft" id="backToSim">📋 ${t('btnBackList')}</button>
       </div>
     </div>
-    <div id="qlist">${items}</div>`;
-  document.getElementById('retry').onclick = ()=> retryRound(round.roundId);
-  document.getElementById('toWrong').onclick = ()=> go('wrong');
-  document.getElementById('backList').onclick = ()=> go('sim');
-}
-function retryRound(roundId){
-  const rounds = getRounds();
-  const r = rounds.find(x=>x.roundId===roundId);
-  if (!r) return;
-  r.questions.forEach(q=>{ q.userAnswer = null; });
-  r.status = 'pending'; r.score=null; r.total=null; r.wrong=null; r.correct=null;
-  persistRounds();
-  go('exam', roundId);
+
+    <div id="resultQuestionsList">${itemsHtml}</div>
+  `;
+
+  document.getElementById('retryRound').onclick = () => {
+    round.questions.forEach(q => { q.userAnswer = null; });
+    round.status = 'pending';
+    round.score = null; round.total = null; round.wrong = null; round.correct = null;
+    persistRounds();
+    go('exam', round.roundId);
+  };
+  document.getElementById('toWrongBook').onclick = () => go('wrong');
+  document.getElementById('backToSim').onclick = () => go('sim');
 }
 
-/* 历史轮次已合并进「面试模拟」列表（见 renderSim），不再单独成页 */
-
-function renderBank(){
+/* --- 10.4 本地题库视图 (Bank) - 统一分类 + 多维度搜索 + “其他”兜底 --- */
+function renderBank() {
   const bank = getBank();
+  const search = (state.bankSearch || '').trim().toLowerCase();
+  const catFilter = state.bankCategoryFilter || 'ALL';
+
+  // 多维度搜索匹配逻辑：包括但不限于题干、类型名字、分类、选项、解析、创建日期等
+  let filtered = bank.filter(q => {
+    // 类别匹配
+    const normCat = normalizeCategoryName(q.category);
+    if (catFilter !== 'ALL' && normCat !== catFilter) return false;
+
+    // 手动多维度搜索
+    if (!search) return true;
+    const typeLabel = q.type === 'single' ? '单选 single' : q.type === 'multiple' ? '多选 multiple' : '判断 boolean';
+    const dateStr = fmtTime(q.createdAt);
+    const optionsStr = (q.options || []).join(' ');
+    const fullSearchText = `${q.question} ${q.category} ${normCat} ${typeLabel} ${optionsStr} ${q.explanation || ''} ${dateStr}`.toLowerCase();
+    return fullSearchText.includes(search);
+  });
+
+  // 按分类归档分组（包含“其他”兜底）
   const groups = {};
-  for (const q of bank){ (groups[q.category] = groups[q.category] || []).push(q); }
-  const cats = Object.keys(groups).sort();
-  const secs = cats.map(cat=>{
+  for (const q of filtered) {
+    const c = normalizeCategoryName(q.category);
+    (groups[c] = groups[c] || []).push(q);
+  }
+
+  // 分类过滤按钮组：和首页按钮完全一致 + “其他”
+  const allBankCategories = [...STANDARD_CATEGORIES, '其他'];
+  const filterChipsHtml = [
+    `<div class="cat-filter-chip ${catFilter === 'ALL' ? 'active' : ''}" data-cat="ALL">${t('allCategory')} (${bank.length})</div>`
+  ].concat(allBankCategories.map(c => {
+    const count = bank.filter(q => normalizeCategoryName(q.category) === c).length;
+    return `<div class="cat-filter-chip ${catFilter === c ? 'active' : ''}" data-cat="${escapeHtml(c)}">${escapeHtml(c)} (${count})</div>`;
+  })).join('');
+
+  // 渲染题目分组折叠项
+  const sortedGroupKeys = Object.keys(groups).sort((a, b) => {
+    if (a === '其他') return 1;
+    if (b === '其他') return -1;
+    return STANDARD_CATEGORIES.indexOf(a) - STANDARD_CATEGORIES.indexOf(b);
+  });
+
+  const secsHtml = sortedGroupKeys.map(cat => {
     const qs = groups[cat];
-    const items = qs.map(q=>{
-      const badge = q.type==='single'?'单选':q.type==='multiple'?'多选':'判断';
-      const opts = q.options.map((o,j)=>{
-        const isAns = Array.isArray(q.answer)? q.answer.indexOf(j)>=0 : q.answer===j;
-        return `<div class="opt ${isAns?'correct':''}"><span>${String.fromCharCode(65+j)}. ${escapeHtml(o)}</span>${isAns?' <b style="color:var(--ok)">✓正确答案</b>':''}</div>`;
+    const itemsHtml = qs.map(q => {
+      const badgeText = q.type === 'single' ? '单选' : q.type === 'multiple' ? '多选' : '判断';
+      const ansText = Array.isArray(q.answer) ? q.answer.map(k => String.fromCharCode(65 + k)).join('、') : String.fromCharCode(65 + q.answer);
+      const optsHtml = q.options.map((o, j) => {
+        const isAns = Array.isArray(q.answer) ? q.answer.indexOf(j) >= 0 : q.answer === j;
+        return `
+          <div class="opt ${isAns ? 'correct' : ''}">
+            <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
+            <span class="opt-text">${escapeHtml(o)}</span>
+            ${isAns ? `<b style="color:var(--ok);font-size:12px;margin-left:auto">✓ 正确答案</b>` : ''}
+          </div>
+        `;
       }).join('');
-      const ansText = Array.isArray(q.answer)? q.answer.map(k=>String.fromCharCode(65+k)).join('、') : String.fromCharCode(65+q.answer);
-      return `<div class="q"><div class="badges"><span class="badge t-${q.type}">${badge}</span></div>
-        <div class="stem">${escapeHtml(q.question)}</div>${opts}
-        <div class="explain">答案：${ansText}　｜　${escapeHtml(q.explanation)}</div></div>`;
+
+      return `
+        <div class="q">
+          <div class="badges">
+            <span class="badge t-${q.type}">${badgeText}</span>
+            <span class="badge cat">${escapeHtml(q.category)}</span>
+            <span class="muted" style="font-size:11px;margin-left:auto">入库时间：${fmtTime(q.createdAt)}</span>
+          </div>
+          <div class="stem">${escapeHtml(q.question)}</div>
+          ${optsHtml}
+          <div class="explain">🎯 答案：${ansText} ｜ ${escapeHtml(q.explanation)}</div>
+        </div>
+      `;
     }).join('');
-    return `<details class="card" style="margin-bottom:12px"><summary style="cursor:pointer;font-weight:600;outline:none">${escapeHtml(cat)}（${qs.length} 题）<span class="muted" style="font-weight:400;font-size:12px">　点击展开</span></summary><div style="margin-top:12px">${items}</div></details>`;
+
+    return `
+      <details class="card" style="margin-bottom:12px">
+        <summary>
+          <span>${escapeHtml(cat)} <b style="color:var(--brand)">(${qs.length})</b></span>
+          <span class="muted" style="font-size:12px">点击展开 / 折叠 ▾</span>
+        </summary>
+        <div style="margin-top:16px">${itemsHtml}</div>
+      </details>
+    `;
   }).join('');
-  app.innerHTML = `<div class="card">
-    <h3 style="margin-top:0">本地题库</h3>
-    <p class="muted">共 <b>${bank.length}</b> 题。按分类分组，默认折叠，点击分类标题展开；每题都带正确答案与解析。每次 AI 出题都会自动充实这里。</p>
-    <div class="row" style="margin-top:14px"><button class="btn soft" id="bankRound2">从题库随机抽一组（离线可用）</button></div>
-    <div style="margin-top:14px">${secs}</div>
-  </div>`;
-  const b = document.getElementById('bankRound2'); if (b) b.onclick = createBankRound;
+
+  app.innerHTML = `
+    <div class="card">
+      <h3 style="margin-top:0">${t('bankTitle')}</h3>
+      <p class="muted">${t('bankDesc', { count: bank.length })}</p>
+
+      <!-- 多维度手动搜索 -->
+      <div class="row" style="margin-top:16px">
+        <input type="text" id="bankSearchInp" placeholder="${t('searchBankPlaceholder')}" value="${escapeHtml(state.bankSearch)}" style="max-width:480px" />
+        <button class="btn soft" id="bankRound3">🎲 ${t('btnSampleBank')}</button>
+      </div>
+
+      <!-- 与首页一致的分类过滤栏（增加“其他”） -->
+      <div class="category-filter-bar">
+        ${filterChipsHtml}
+      </div>
+    </div>
+
+    <div>${sortedGroupKeys.length > 0 ? secsHtml : `<div class="card muted" style="text-align:center;padding:32px 0;">未检索到匹配题目。可尝试清除搜索词或点击「面试模拟」使用 AI 生成新题！</div>`}</div>
+  `;
+
+  document.getElementById('bankRound3').onclick = createBankRound;
+  const sInp = document.getElementById('bankSearchInp');
+  sInp.oninput = () => {
+    state.bankSearch = sInp.value;
+    renderBank();
+    const curInp = document.getElementById('bankSearchInp');
+    if (curInp) { curInp.focus(); curInp.selectionStart = curInp.selectionEnd = curInp.value.length; }
+  };
+
+  app.querySelectorAll('.cat-filter-chip').forEach(chip => {
+    chip.onclick = () => {
+      state.bankCategoryFilter = chip.dataset.cat;
+      renderBank();
+    };
+  });
 }
 
-function renderWrong(){
+/* --- 10.5 错题本视图 (Wrong) - 增加每页20道分页 + 题题带答案与详解 --- */
+function renderWrong() {
   const w = getWrong();
   const ids = Object.keys(w);
-  if (ids.length===0){ app.innerHTML = `<div class="card muted">错题本还是空的。去做几轮常规练习，答错的题会自动沉淀到这里。</div>`; return; }
-  const items = ids.map(id=>{
-    const e = w[id]; const q = getFromBank(id);
-    const cat = q?q.category:'?'; const t = q? (q.type==='single'?'单选':q.type==='multiple'?'多选':'判断') : '';
-    return `<div class="list-item"><div><b style="font-weight:600">${escapeHtml(q?q.question:'（题目缺失）')}</b>
-      <div class="meta">${t} · ${cat} · 错 ${e.wrongCount} 次 · 最近 ${fmtTime(e.lastWrong)} · 连续答对 ${e.correctStreak||0}/2</div></div>
-      <span class="pill wrongbook">待巩固</span></div>`;
+  if (ids.length === 0) {
+    app.innerHTML = `
+      <div class="card">
+        <h3 style="margin-top:0">${t('wrongTitle')}</h3>
+        <p class="muted">${t('wrongEmpty')}</p>
+        <div class="row" style="margin-top:16px">
+          <button class="btn" id="goSimBtn">🚀 ${t('btnGenNew')}</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('goSimBtn').onclick = () => go('sim');
+    return;
+  }
+
+  // 错题本分页：每页 20 道题
+  const pageSize = state.wrongPageSize || 20;
+  const totalCount = ids.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  if (state.wrongPage > totalPages) state.wrongPage = totalPages;
+  const startIdx = (state.wrongPage - 1) * pageSize;
+  const pageIds = ids.slice(startIdx, startIdx + pageSize);
+
+  const itemsHtml = pageIds.map(id => {
+    const e = w[id];
+    const q = getFromBank(id);
+    if (!q) return '';
+    const badgeText = q.type === 'single' ? '单选' : q.type === 'multiple' ? '多选' : '判断';
+    const ansText = Array.isArray(q.answer) ? q.answer.map(k => String.fromCharCode(65 + k)).join('、') : String.fromCharCode(65 + q.answer);
+
+    const optsHtml = (q.options || []).map((o, j) => {
+      const isAns = Array.isArray(q.answer) ? q.answer.indexOf(j) >= 0 : q.answer === j;
+      return `
+        <div class="opt ${isAns ? 'correct' : ''}">
+          <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
+          <span class="opt-text">${escapeHtml(o)}</span>
+          ${isAns ? `<b style="color:var(--ok);font-size:12px;margin-left:auto">✓ 正确答案</b>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="q">
+        <div class="badges">
+          <span class="badge t-${q.type}">${badgeText}</span>
+          <span class="badge cat">${escapeHtml(q.category)}</span>
+          <span class="pill wrongbook">${t('wrongStatsMeta', { count: e.wrongCount, time: fmtTime(e.lastWrong), streak: e.correctStreak || 0 })}</span>
+        </div>
+        <div class="stem">${escapeHtml(q.question)}</div>
+        ${optsHtml}
+        <div class="yourans">
+          ${t('labelCorrectAns')}：<span style="font-weight:600;color:var(--ok)">${ansText}</span>
+        </div>
+        <div class="explain">💡 ${t('labelExplanation')}：${escapeHtml(q.explanation)}</div>
+      </div>
+    `;
   }).join('');
-  app.innerHTML = `<div class="card">
-    <h3 style="margin-top:0">错题本（按题去重，累计错误次数）</h3>
-    <p class="muted">共 <b>${ids.length}</b> 道题。点下面的按钮基于错题本出一组原题练习，连续答对 2 次自动移出。</p>
-    <div class="row"><button class="btn ghost" id="wrongPractice">开始错题本练习</button></div>
-    <div style="margin-top:14px">${items}</div>
-  </div>`;
-  document.getElementById('wrongPractice').onclick = startWrongRound;
+
+  // 分页控件
+  let paginationHtml = '';
+  if (totalPages > 1) {
+    let pageNumbersHtml = '';
+    for (let p = 1; p <= totalPages; p++) {
+      pageNumbersHtml += `<button class="page-num ${p === state.wrongPage ? 'active' : ''}" data-wrong-page="${p}">${p}</button>`;
+    }
+    paginationHtml = `
+      <div class="pagination-bar">
+        <div>${t('wrongPageInfo', { current: state.wrongPage, total: totalPages, count: totalCount })}</div>
+        <div class="page-btns">
+          <button class="btn soft sm" id="prevWrongPage" ${state.wrongPage <= 1 ? 'disabled' : ''}>${t('pagePrev')}</button>
+          ${pageNumbersHtml}
+          <button class="btn soft sm" id="nextWrongPage" ${state.wrongPage >= totalPages ? 'disabled' : ''}>${t('pageNext')}</button>
+        </div>
+      </div>
+    `;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h3 style="margin:0 0 6px 0">${t('wrongTitle')}</h3>
+          <p class="muted" style="margin:0">${t('wrongDesc', { count: totalCount })}</p>
+        </div>
+        <button class="btn" id="startWrongPracticeBtn">${t('btnStartWrongPractice')}</button>
+      </div>
+    </div>
+
+    <div>${itemsHtml}</div>
+    ${paginationHtml}
+  `;
+
+  document.getElementById('startWrongPracticeBtn').onclick = startWrongRound;
+
+  const prevBtn = document.getElementById('prevWrongPage');
+  if (prevBtn) prevBtn.onclick = () => { if (state.wrongPage > 1) { state.wrongPage--; renderWrong(); } };
+  const nextBtn = document.getElementById('nextWrongPage');
+  if (nextBtn) nextBtn.onclick = () => { if (state.wrongPage < totalPages) { state.wrongPage++; renderWrong(); } };
+  app.querySelectorAll('[data-wrong-page]').forEach(p => {
+    p.onclick = () => {
+      state.wrongPage = parseInt(p.dataset.wrongPage, 10);
+      renderWrong();
+    };
+  });
 }
 
-function renderSettings(){
+/* --- 10.6 设置与 AI 视图 (Settings) - 恢复默认设置提供弹窗提示 --- */
+function renderSettings() {
   const s = getSettings();
   const provider = normalizeProvider(s.provider);
   const preset = PROVIDER_PRESETS[provider];
-  const isLocal = !!preset.local;
+  const isPollinations = provider === 'pollinations';
   const models = preset.models || [];
   const curModel = (s.model || '').trim() || preset.model || '';
   const needKey = !!preset.needKey;
   const isCustomModel = models.length === 0 || models.indexOf(curModel) < 0;
   const savedKey = (s.apiKeys && s.apiKeys[provider]) || s.apiKey || '';
 
-  const providerOpts = Object.keys(PROVIDER_PRESETS)
-    .map(k => `<option value="${k}"${provider===k?' selected':''}>${escapeHtml(PROVIDER_PRESETS[k].label)}</option>`).join('');
-  const modelOpts = models.map(m => `<option value="${m}"${(!isCustomModel && curModel===m)?' selected':''}>${escapeHtml(m)}</option>`).join('')
-    + `<option value="__custom__"${isCustomModel?' selected':''}>自定义输入模型名…</option>`;
+  const providerOpts = Object.keys(PROVIDER_PRESETS).map(k => {
+    return `<option value="${k}" ${provider === k ? 'selected' : ''}>${escapeHtml(PROVIDER_PRESETS[k].label)}</option>`;
+  }).join('');
 
-  app.innerHTML = `<div class="card">
-    <h3 style="margin-top:0">设置 / 出题来源</h3>
-    <label class="fld">① 选择出题来源（切换后立即生效）</label>
-    <select id="setProvider">${providerOpts}</select>
-    <div class="hint">${escapeHtml(preset.hint||'')}${preset.keyUrl?` 免费获取 Key：<a href="${preset.keyUrl}" target="_blank" rel="noreferrer">${escapeHtml(preset.keyUrl)}</a>`:''}</div>
+  const modelOpts = models.map(m => {
+    return `<option value="${m}" ${(!isCustomModel && curModel === m) ? 'selected' : ''}>${escapeHtml(m)}</option>`;
+  }).join('') + `<option value="__custom__" ${isCustomModel ? 'selected' : ''}>自定义模型名…</option>`;
 
-    ${isLocal ? `
-    <label class="fld">② 本地题库</label>
-    <div class="hint">当前题库共 <b>${getBank().length}</b> 道（单选 ${getBank().filter(q=>q.type==='single').length} / 多选 ${getBank().filter(q=>q.type==='multiple').length} / 判断 ${getBank().filter(q=>q.type==='boolean').length}）。
-    每轮从中随机抽 40 单选 + 10 多选 + 10 判断，不重复。题库会随着你使用 AI 出题不断变厚。</div>` : `
-    <label class="fld">② 选择模型</label>
-    <select id="setModel">${modelOpts}</select>
-    <input type="text" id="setModelCustom" placeholder="填写模型名，例如 glm-4-flash" value="${isCustomModel?escapeHtml(curModel):''}" style="margin-top:8px;display:${isCustomModel?'block':'none'}" />
+  app.innerHTML = `
+    <div class="card">
+      <h3 style="margin-top:0">${t('settingsTitle')}</h3>
+      <p class="muted">EasyOffer 采用纯本地存储架构，不强制提供庞大题库，题目由用户私有 AI 生成并沉淀落盘到本机。</p>
 
-    <label class="fld">③ API Key ${needKey?'（必填，只存本机）':'（当前通道免填）'}</label>
-    <input type="password" id="setKey" placeholder="${needKey?'粘贴你的 API Key':'无需填写'}" value="${needKey?escapeHtml(savedKey):''}" />
+      <label class="fld">${t('setProviderLabel')}</label>
+      <select id="setProvider">${providerOpts}</select>
+      <div class="hint">${escapeHtml(preset.hint || '')} ${preset.keyUrl ? `<a href="${preset.keyUrl}" target="_blank" rel="noreferrer" style="color:var(--brand)">点击免费获取 API Key ↗</a>` : ''}</div>
 
-    ${provider==='custom'?`<label class="fld">④ 接口地址（chat/completions 完整地址）</label>
-    <input type="text" id="setBaseUrl" placeholder="https://xxx/v1/chat/completions" value="${escapeHtml(s.baseUrl||'')}" />`:''}`}
+      <label class="fld">${t('setModelLabel')}</label>
+      <select id="setModel">${modelOpts}</select>
+      <input type="text" id="setModelCustom" placeholder="输入模型名称，例如 glm-4-flash" value="${isCustomModel ? escapeHtml(curModel) : ''}" style="margin-top:8px;display:${isCustomModel ? 'block' : 'none'}" />
 
-    <div class="row" style="margin-top:16px">
-      <button class="btn" id="saveSet">保存设置</button>
-      <button class="btn soft" id="testSet">测试连接</button>
-      <button class="btn ghost" id="resetSet">恢复默认</button>
+      <label class="fld">${t('setKeyLabel')}</label>
+      <input type="password" id="setKey" placeholder="${needKey ? '在此粘贴你的 API Key' : '该通道无需填 Key'}" value="${needKey ? escapeHtml(savedKey) : ''}" />
+
+      ${provider === 'custom' ? `
+        <label class="fld">${t('setBaseUrlLabel')}</label>
+        <input type="text" id="setBaseUrl" placeholder="https://api.openai.com/v1/chat/completions" value="${escapeHtml(s.baseUrl || '')}" />
+      ` : ''}
+
+      <div class="row" style="margin-top:24px">
+        <button class="btn" id="saveSet">💾 ${t('btnSaveSettings')}</button>
+        <button class="btn soft" id="testSet">⚡ ${t('btnTestSettings')}</button>
+        <button class="btn ghost" id="resetSet">🔄 ${t('btnResetSettings')}</button>
+      </div>
+
+      <div class="hint" id="setHint" style="margin-top:12px"></div>
     </div>
-    <div class="hint" id="setHint">${isLocal
-      ? '当前生效：本地题库出题（无需联网，永远可用）'
-      : '当前生效：'+escapeHtml(preset.label)+' ｜ 模型：'+escapeHtml(curModel||'（未选择）')+((needKey && !savedKey)?' ｜ ⚠️ 还没填 API Key，出题会失败':'')}</div>
-  </div>
-  <div class="card">
-    <h3 style="margin-top:0">建议怎么选</h3>
-    <ul class="muted" style="margin:0;padding-left:18px;font-size:13px">
-      <li><b>默认「本地题库出题」最省心</b>：不联网、秒出、稳定，每轮从题库随机抽 60 题不重复。</li>
-      <li><b>想每轮都出新题 → 选智谱 GLM</b>：手机号注册 <code>open.bigmodel.cn</code> → 控制台「API Keys」创建密钥 → 粘贴到第③项，模型选 <code>glm-4-flash</code>（免费）。这是我实测最稳的一条路。</li>
-      <li>「免 Key 免费通道（Pollinations）」不用注册，但海外服务、匿名档会限流（可能报 402/429 或返回空），仅供试玩。</li>
-      <li>硅基流动 / DeepSeek 也可用，需各自注册并填对应 Key。</li>
-      <li>用 <code>node server.js</code> 启动时，AI 请求走本机后端转发，不存在跨域问题，Key 只留在本机 <code>data.json</code>。</li>
-    </ul>
-  </div>`;
+  `;
 
   const $id = id => document.getElementById(id);
   const readForm = () => {
     const p = $id('setProvider').value;
-    if (PROVIDER_PRESETS[p] && PROVIDER_PRESETS[p].local){
-      const cur = getSettings();
-      return { provider:p, model:'', baseUrl:'', apiKeys: Object.assign({}, cur.apiKeys||{}), apiKey:'' };
-    }
-    const modelSel = $id('setModel').value;
+    const cur = getSettings();
+    const modelSel = $id('setModel') ? $id('setModel').value : '';
     const model = (modelSel === '__custom__') ? ($id('setModelCustom').value || '').trim() : modelSel;
-    const key = ($id('setKey').value || '').trim();
-    const baseUrl = $id('setBaseUrl') ? $id('setBaseUrl').value.trim() : (getSettings().baseUrl || '');
-    const apiKeys = Object.assign({}, getSettings().apiKeys || {});
+    const key = $id('setKey') ? ($id('setKey').value || '').trim() : '';
+    const baseUrl = $id('setBaseUrl') ? $id('setBaseUrl').value.trim() : (cur.baseUrl || '');
+    const apiKeys = Object.assign({}, cur.apiKeys || {});
     if (key) apiKeys[p] = key; else delete apiKeys[p];
-    return { provider: p, model, baseUrl, apiKeys, apiKey: key };
+    return Object.assign({}, cur, { provider: p, model, baseUrl, apiKeys, apiKey: key });
   };
 
-  // 关键修复：切换服务商时先落盘再重绘，选择不会再被旧设置顶回去
   $id('setProvider').onchange = () => {
-    const cur = getSettings();
-    const p = $id('setProvider').value;
-    const isLocalNext = !!(PROVIDER_PRESETS[p] && PROVIDER_PRESETS[p].local);
-    save(LS.settings, {
-      provider: p,
-      model: '',                       // 换来源后清空模型，用新来源的默认模型
-      baseUrl: cur.baseUrl || '',
-      apiKeys: Object.assign({}, cur.apiKeys || {}),
-      apiKey: ''
-    });
-    toast('已切换到：' + PROVIDER_PRESETS[p].label.split('（')[0]);
+    const f = readForm();
+    f.model = '';
+    save(LS.settings, f);
     renderSettings();
   };
-  if ($id('setModel')) $id('setModel').onchange = () => {
-    const isCustom = $id('setModel').value === '__custom__';
-    $id('setModelCustom').style.display = isCustom ? 'block' : 'none';
-    if (!isCustom){ save(LS.settings, readForm()); renderSettings(); }
-  };
+
+  if ($id('setModel')) {
+    $id('setModel').onchange = () => {
+      const isCustom = $id('setModel').value === '__custom__';
+      $id('setModelCustom').style.display = isCustom ? 'block' : 'none';
+      if (!isCustom) {
+        save(LS.settings, readForm());
+        renderSettings();
+      }
+    };
+  }
+
   $id('saveSet').onclick = () => {
     const f = readForm();
-    if (!PROVIDER_PRESETS[f.provider].local && !f.model) { toast('请选择或填写模型名'); return; }
     save(LS.settings, f);
-    toast('设置已保存');
+    toast(t('toastSettingsSaved'));
     renderSettings();
   };
+
+  // 恢复默认设置给用户明确提示
   $id('resetSet').onclick = () => {
-    save(LS.settings, { provider:'local', model:'', baseUrl:'', apiKey:'', apiKeys:{} });
-    toast('已恢复默认（本地题库出题）');
-    renderSettings();
-  };
-  $id('testSet').onclick = async () => {
-    const hint = $id('setHint');
-    const f = readForm();
-    save(LS.settings, f);                 // 测试前先保存，保证测试的就是当前选择
-    if (PROVIDER_PRESETS[f.provider].local){
-      hint.textContent = '当前是本地题库模式，无需联网，题库共 ' + getBank().length + ' 道题。';
+    if (!confirm('确定要恢复默认设置吗？\n当前已保存的服务商与自定义 API Key 将被重置为 EasyOffer 默认的免费大模型通道。')) {
       return;
     }
-    hint.textContent = '正在测试连接…';
-    try{
-      const t = await callAI([{role:'user',content:'只回复两个字：成功'}], f);
-      hint.textContent = '✅ 连接成功（' + PROVIDER_PRESETS[f.provider].label.split('（')[0] + ' / ' + (f.model||PROVIDER_PRESETS[f.provider].model) + '），模型返回：' + String(t).slice(0,40);
-      toast('连接成功');
-    }catch(e){
-      hint.textContent = '❌ 连接失败：' + e.message;
-      toast('连接失败');
-    }
+    const cur = getSettings();
+    save(LS.settings, {
+      provider: 'pollinations',
+      model: 'openai',
+      baseUrl: '',
+      apiKey: '',
+      apiKeys: {},
+      exclusions: cur.exclusions || []
+    });
+    toast('已恢复默认设置（默认免 Key 免费通道）');
+    renderSettings();
   };
+
+  const testBtn = $id('testSet');
+  if (testBtn) {
+    testBtn.onclick = async () => {
+      const hint = $id('setHint');
+      const f = readForm();
+      save(LS.settings, f);
+      hint.textContent = '正在发起测试请求，请稍候…';
+      try {
+        const out = await callAI([{ role: 'user', content: '请只回复两个字：连接成功' }], f);
+        hint.innerHTML = `<span style="color:var(--ok)">✅ 测试成功！模型返回：${escapeHtml(out.slice(0, 50))}</span>`;
+        toast(t('toastSettingsTestedOk'));
+      } catch(e) {
+        hint.innerHTML = `<span style="color:var(--bad)">❌ 测试失败：${escapeHtml(e.message)}</span>`;
+        toast(t('toastSettingsTestedErr') + e.message);
+      }
+    };
+  }
 }
 
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* ==========================================================================
+   11. 侧边栏与模态框绑定
+   ========================================================================== */
+function setupInteractions() {
+  document.getElementById('langSwitch').onclick = toggleLanguage;
+  document.getElementById('themeSwitchBtn').onclick = toggleTheme;
 
-async function withLoading(fn, text){
-  const prev = app.innerHTML;
-  app.innerHTML = `<div class="loading"><div class="spinner"></div>${text || '处理中，请稍候…'}</div>`;
-  try { await fn(); }
-  catch(e){ app.innerHTML = prev; toast('出错了：'+e.message); }
+  document.querySelectorAll('.role-item').forEach(el => {
+    el.onclick = () => switchRole(el.dataset.role);
+  });
+
+  const confirmModal = document.getElementById('confirmModal');
+  const closeConfirm = document.getElementById('closeConfirmModal');
+  const cancelDel = document.getElementById('cancelDelBtn');
+  const doDel = document.getElementById('doDelBtn');
+
+  const closeDelModal = () => confirmModal.classList.remove('open');
+  closeConfirm.onclick = closeDelModal;
+  cancelDel.onclick = closeDelModal;
+  doDel.onclick = () => {
+    if (state.pendingDeleteId) {
+      deleteRound(state.pendingDeleteId);
+      state.pendingDeleteId = null;
+    }
+    closeDelModal();
+  };
+
+  confirmModal.addEventListener('click', (e) => {
+    if (e.target === confirmModal) closeDelModal();
+  });
 }
 
-/* ============ 初始化 ============ */
-function cleanWrong(){
-  const w = getWrong(); const keys = Object.keys(w); let changed = false;
-  for (const k of keys){ if (!k || k==='undefined' || !getFromBank(k)){ delete w[k]; changed = true; } }
+function cleanWrong() {
+  const w = getWrong();
+  let changed = false;
+  for (const k of Object.keys(w)) {
+    if (!k || k === 'undefined' || !getFromBank(k)) {
+      delete w[k];
+      changed = true;
+    }
+  }
   if (changed) save(LS.wrong, w);
 }
-/* 兼容旧版数据：给老轮次补 kind / status / createdAt 等字段 */
-function migrateRounds(){
-  const rounds = getRounds(); let changed = false;
-  for (const r of rounds){
-    if (r.kind === undefined){ r.kind = (r.type === 'wrongbook') ? 'wrongbook' : 'ai'; changed = true; }
-    if (r.status === undefined){ r.status = (r.score != null) ? 'done' : 'pending'; changed = true; }
-    if (r.createdAt === undefined){ r.createdAt = r.time || Date.now(); changed = true; }
-    if (r.generating === undefined){ r.generating = false; changed = true; }
-    if (r.source === undefined){ r.source = ''; changed = true; }
+
+function migrateRounds() {
+  const rounds = getRounds();
+  let changed = false;
+  for (const r of rounds) {
+    if (r.kind === undefined) { r.kind = 'ai'; changed = true; }
+    if (r.status === undefined) { r.status = r.score != null ? 'done' : 'pending'; changed = true; }
+    if (r.createdAt === undefined) { r.createdAt = r.time || Date.now(); changed = true; }
+    if (r.generating === undefined) { r.generating = false; changed = true; }
+    if (r.source === undefined) { r.source = ''; changed = true; }
   }
   if (changed) persistRounds();
 }
-/* 从历史已交卷轮次重建错题本（修复早期 AI 题无 qid 导致错题本塌缩成一个条目；只跑一次） */
-function rebuildWrongFromRounds(){
-  const w = getWrong(); const rounds = getRounds(); let added = 0;
-  for (const r of rounds){
-    const done = (r.status === 'done') || (r.score != null);
-    if (!done) continue;
-    for (const q of (r.questions || [])){
-      const bad = (typeof q.isCorrect === 'boolean') ? !q.isCorrect : !isCorrect(q, q.userAnswer);
-      if (!bad) continue;
-      const qid = (q.qid && q.qid !== 'undefined') ? q.qid : hashQid(q.type, q.question);
-      if (!getFromBank(qid)) continue;               // 只收能在题库中解析到的题
-      const e = w[qid] || { qid, wrongCount:0, lastWrong:0, correctStreak:0 };
-      e.wrongCount += 1; e.lastWrong = Math.max(e.lastWrong || 0, r.time || r.createdAt || 0); e.correctStreak = 0;
-      w[qid] = e; added++;
-    }
-  }
-  if (added) save(LS.wrong, w);
-  return added;
-}
-async function init(){
-  document.querySelectorAll('#nav button').forEach(b=> b.onclick = ()=>{ if(!allowLeave()) return; go(b.dataset.view); });
+
+async function init() {
+  document.querySelectorAll('#nav button').forEach(b => {
+    b.onclick = () => {
+      selectedRoleId = 'frontend';
+      go(b.dataset.view);
+    };
+  });
+  document.getElementById('brandLogo').onclick = () => {
+    selectedRoleId = 'frontend';
+    go('sim');
+  };
+
+  applyTheme(currentTheme);
+  setupInteractions();
   await bootstrap();
-  seedBankIfEmpty();
   migrateRounds();
   cleanWrong();
-  const stored = load(LS.settings, {}) || {};
-  if (!stored._migratedWrong){ rebuildWrongFromRounds(); stored._migratedWrong = true; save(LS.settings, stored); }
-  await doSync(); // 初始化（种子注入/恢复历史）后立即强制落盘一次，避免依赖防抖定时器导致初始数据丢失
-  onRoute();      // 根据当前 hash 渲染（无 hash 时默认进入「面试模拟」）
+  updateI18nStaticText();
+
+  await doSync();
+  onRoute();
 }
-init().catch(e=>{ console.error(e); var d=document.getElementById('app'); if(d){ d.innerHTML='<div class="card" style="border-color:#fecaca"><h3 style="margin-top:0;color:#dc2626">初始化失败</h3><pre style="white-space:pre-wrap;font-size:13px">'+String((e&&e.message)||e)+'</pre></div>'; } });
+
+init().catch(e => {
+  console.error('EasyOffer Init Error:', e);
+  if (app) {
+    app.innerHTML = `
+      <div class="card" style="border-color:var(--bad)">
+        <h3 style="color:var(--bad)">⚠️ 初始化失败</h3>
+        <pre style="white-space:pre-wrap;font-size:13px">${escapeHtml(e.message || e)}</pre>
+      </div>
+    `;
+  }
+});
 </script>
 </body>
 </html>
