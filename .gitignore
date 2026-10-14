@@ -1,0 +1,12 @@
+# 运行时数据（含 AI 接口 Key），禁止提交到远端
+/data/
+data.json
+data.json.tmp
+
+# 日志与系统垃圾文件
+*.log
+.DS_Store
+Thumbs.db
+
+# 依赖
+node_modules/
