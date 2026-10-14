@@ -613,12 +613,210 @@
     font-weight: 600;
     margin-bottom: 14px;
     color: var(--text-primary);
-    line-height: 1.5;
+    line-height: 1.6;
   }
   .q .stem::before {
     content: counter(q) ". ";
     color: var(--brand);
     font-family: var(--font-mono);
+  }
+
+  /* 代码块与行内代码 */
+  .code-block-wrapper {
+    margin: 12px 0 14px 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    overflow: hidden;
+    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.05);
+    font-weight: 400;
+  }
+  .code-block-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: var(--bg-hover);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+  .code-block-lang {
+    color: var(--brand);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .code-block-lang::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand);
+  }
+  .code-copy-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+  .code-copy-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+  }
+  .code-block-pre {
+    margin: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: transparent;
+    tab-size: 2;
+  }
+  .code-block-pre code {
+    font-family: inherit;
+  }
+  .inline-code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    vertical-align: baseline;
+    font-weight: 500;
+  }
+  .stem-text {
+    line-height: 1.6;
+  }
+  /* 语法着色 */
+  .hl-kwd { color: #818cf8; font-weight: 600; }
+  .hl-str { color: #34d399; }
+  .hl-num { color: #fbbf24; }
+  .hl-val { color: #f472b6; font-weight: 600; }
+  .hl-bi  { color: #38bdf8; }
+  .hl-cmt { color: var(--text-muted); font-style: italic; }
+
+  :root[data-theme="light"] .hl-kwd { color: #4f46e5; }
+  :root[data-theme="light"] .hl-str { color: #059669; }
+  :root[data-theme="light"] .hl-num { color: #d97706; }
+  :root[data-theme="light"] .hl-val { color: #db2777; }
+  :root[data-theme="light"] .hl-bi  { color: #0284c7; }
+
+  /* 题型分卷横幅 (Section Divider) */
+  .section-divider {
+    margin: 28px 0 16px 0;
+    padding: 14px 18px;
+    background: var(--bg-surface-elevated);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--brand);
+    border-top: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.05);
+    scroll-margin-top: 70px;
+  }
+  .section-divider.t-multiple {
+    border-left-color: var(--warn);
+  }
+  .section-divider.t-boolean {
+    border-left-color: var(--purple);
+  }
+  .section-divider-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-divider-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  /* 题型快速跳转导航 */
+  .exam-section-nav {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0 16px 0;
+    flex-wrap: wrap;
+  }
+  .section-nav-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+  .section-nav-btn:hover {
+    border-color: var(--brand);
+    color: var(--brand);
+    background: var(--brand-soft);
+    transform: translateY(-1px);
+  }
+  /* 成绩报告题型分项卡片 */
+  .type-score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+    text-align: left;
+  }
+  .type-score-card {
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .type-score-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--brand);
+  }
+  .type-score-card.t-multiple::before { background: var(--warn); }
+  .type-score-card.t-boolean::before { background: var(--purple); }
+  .type-score-card b {
+    font-size: 18px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+  }
+  .type-score-card span {
+    font-size: 12px;
+    color: var(--text-muted);
   }
 
   .opt {
@@ -1143,7 +1341,24 @@ const I18N = {
     comingSoonTitle: '【{role}】题库研发中',
     comingSoonDesc: '该专业方向的大模型出题适配正在研发校对中，涵盖实战核心真题。敬请期待！',
     btnBackToFrontend: '返回前端刷题',
-    allCategory: '全部'
+    allCategory: '全部',
+    btnCleanBank: '🧹 清洗题库重复项',
+    toastBankCleaned: '题库智能清洗完成！已剔除 {count} 道重复/换皮题目',
+    toastAiFallback: '⚠️ AI 出题接口请求失败（{err}），已自动从本地题库抽题兜底生成本轮（新题未入库）。建议在「设置/AI」中配置智谱 GLM 或 DeepSeek 密钥！',
+    roundAiFailedTitle: '本地题库 (AI 兜底)',
+    roundAiFailedDesc: '⚠️ AI 出题接口异常（{err}）。已从本地题库抽取兜底，题库数量未变动。',
+    sectionSingleTitle: '第一部分 · 单项选择题',
+    sectionSingleDesc: '共 {count} 道 · 每题 1.5 分。每题只有一个正确选项，支持快捷键 1-4 或 A-D 作答。',
+    sectionMultipleTitle: '第二部分 · 多项选择题',
+    sectionMultipleDesc: '共 {count} 道 · 每题 2.0 分。每题包含 2 个或以上正确选项，多选、少选或错选均不得分。',
+    sectionBooleanTitle: '第三部分 · 判断题',
+    sectionBooleanDesc: '共 {count} 道 · 每题 2.0 分。请判断题干说法是否正确，仅有「正确」与「错误」两个选项。',
+    sectionNavSingle: '📘 单选题',
+    sectionNavMultiple: '📙 多选题',
+    sectionNavBoolean: '📗 判断题',
+    typeScoreSingle: '单选得分',
+    typeScoreMultiple: '多选得分',
+    typeScoreBoolean: '判断得分'
   },
   'en-US': {
     brandTitle: 'EasyOffer',
@@ -1231,7 +1446,24 @@ const I18N = {
     comingSoonTitle: '【{role}】Bank Under Development',
     comingSoonDesc: 'Curated questions and prompts for this track are currently under development. Stay tuned!',
     btnBackToFrontend: 'Back to Frontend Practice',
-    allCategory: 'All'
+    allCategory: 'All',
+    btnCleanBank: '🧹 Deduplicate Bank',
+    toastBankCleaned: 'Bank cleaned! Removed {count} duplicate questions.',
+    toastAiFallback: '⚠️ AI request failed ({err}). Generated from local bank instead (bank count unchanged). Please configure Key in Settings.',
+    roundAiFailedTitle: 'Local Bank (AI Fallback)',
+    roundAiFailedDesc: '⚠️ AI failed ({err}). Generated from local bank; no new questions added.',
+    sectionSingleTitle: 'Part 1 · Single Choice',
+    sectionSingleDesc: '{count} questions · 1.5 pts each. Exactly 1 correct answer. Shortcuts 1-4 or A-D supported.',
+    sectionMultipleTitle: 'Part 2 · Multiple Choice',
+    sectionMultipleDesc: '{count} questions · 2.0 pts each. 2 or more correct options. All correct required.',
+    sectionBooleanTitle: 'Part 3 · True / False',
+    sectionBooleanDesc: '{count} questions · 2.0 pts each. Determine whether statement is True or False.',
+    sectionNavSingle: '📘 Single Choice',
+    sectionNavMultiple: '📙 Multiple Choice',
+    sectionNavBoolean: '📗 True/False',
+    typeScoreSingle: 'Single Choice Score',
+    typeScoreMultiple: 'Multiple Choice Score',
+    typeScoreBoolean: 'True/False Score'
   }
 };
 
@@ -1459,8 +1691,15 @@ function getSettings() {
 /* ==========================================================================
    6. 工具与排除法过滤
    ========================================================================== */
+function normalizeQuestionStem(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[\s\p{P}\p{S}]+/gu, '');
+}
+
 function hashQid(type, q) {
-  const s = type + '|' + q.trim();
+  const norm = normalizeQuestionStem(q);
+  const s = (type || '') + '|' + (norm || String(q || '').trim().toLowerCase());
   let h = 5381;
   for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
   return 'q' + (h >>> 0).toString(36);
@@ -1492,28 +1731,193 @@ function escapeHtml(s) {
   }[c]));
 }
 
+function formatCodeInQuestion(text) {
+  if (!text) return '';
+  if (text.includes('```')) return text;
+
+  // 1. 检查多行代码题目：第一部分为题干提问，后续为代码行
+  const lines = text.split('\n');
+  if (lines.length > 1) {
+    let splitIdx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (/^(var\s+|let\s+|const\s+|function\s*[\(a-zA-Z]|console\.log|Promise\.|async\s+|class\s+|for\s*\(|if\s*\(|import\s+|export\s+|setTimeout|\/\/)/i.test(line)) {
+        splitIdx = i;
+        break;
+      }
+    }
+    if (splitIdx > 0) {
+      const stemPart = lines.slice(0, splitIdx).join('\n').trim();
+      const codePart = lines.slice(splitIdx).join('\n').trim();
+      return `${stemPart}\n\`\`\`javascript\n${codePart}\n\`\`\``;
+    }
+  }
+
+  // 2. 检查单行压缩代码：例如 "let a=1; function f(){ console.log(a); let a=2; } f(); 会？"
+  if (/^([a-z0-9_\s$]+=\s*|function\s+|const\s+|let\s+|var\s+).*[;{}].*(会[？\?]|输出|结果)/i.test(text.trim())) {
+    const endMatch = text.match(/(会[？\?]|输出是什么[？\?]?|输出结果是[？\?]?|输出是[？\?]?|结果是[？\?]?)$/);
+    if (endMatch) {
+      const questionEnd = endMatch[0];
+      const codePart = text.slice(0, text.length - questionEnd.length).trim();
+      const formattedCode = codePart
+        .replace(/;\s*(?=(let|const|var|function|console|return|f\(|foo\(|fn\())/g, ';\n')
+        .replace(/\{\s*/g, '{\n  ')
+        .replace(/\s*\}/g, '\n}');
+      return `请问执行以下代码${questionEnd}\n\`\`\`javascript\n${formattedCode}\n\`\`\``;
+    }
+  }
+
+  return text;
+}
+
+function highlightSimpleCode(raw) {
+  let s = escapeHtml(raw);
+
+  // 占位保护字符串
+  const placeholders = [];
+  s = s.replace(/(&quot;[\s\S]*?&quot;|&#39;[\s\S]*?&#39;|`[\s\S]*?`)/g, (m) => {
+    placeholders.push(`<span class="hl-str">${m}</span>`);
+    return `__HL_PH_${placeholders.length - 1}__`;
+  });
+
+  // 单行注释
+  s = s.replace(/(\/\/[^\n]*)/g, (m) => {
+    placeholders.push(`<span class="hl-cmt">${m}</span>`);
+    return `__HL_PH_${placeholders.length - 1}__`;
+  });
+
+  // 核心关键字
+  s = s.replace(/\b(const|let|var|function|return|if|else|for|while|async|await|class|new|typeof|instanceof|import|export|from|try|catch|finally|throw|switch|case|break|default|delete)\b/g, '<span class="hl-kwd">$1</span>');
+
+  // 内置常用对象与全局函数
+  s = s.replace(/\b(console|Promise|Object|Array|String|Number|Boolean|Symbol|BigInt|Map|Set|Math|JSON|window|document|setTimeout|setInterval)\b/g, '<span class="hl-bi">$1</span>');
+
+  // 特殊常量与数字
+  s = s.replace(/\b(true|false|null|undefined|NaN)\b/g, '<span class="hl-val">$1</span>');
+  s = s.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="hl-num">$1</span>');
+
+  // 还原占位符
+  s = s.replace(/__HL_PH_(\d+)__/g, (_, idx) => placeholders[parseInt(idx, 10)]);
+
+  return s;
+}
+
+function renderStem(stemText) {
+  if (!stemText) return '';
+  const normalized = formatCodeInQuestion(stemText);
+  const parts = normalized.split(/(```[\s\S]*?```)/g);
+  let html = '';
+
+  for (const part of parts) {
+    if (!part) continue;
+    if (part.startsWith('```') && part.endsWith('```')) {
+      const firstLineEnd = part.indexOf('\n');
+      let lang = 'CODE';
+      let code = '';
+      if (firstLineEnd > 3) {
+        lang = part.slice(3, firstLineEnd).trim() || 'JAVASCRIPT';
+        code = part.slice(firstLineEnd + 1, -3);
+      } else {
+        code = part.slice(3, -3);
+      }
+      code = code.replace(/^\n+|\n+$/g, '');
+      const highlighted = highlightSimpleCode(code);
+      const rawSafeAttr = escapeHtml(code);
+      html += `
+        <div class="code-block-wrapper">
+          <div class="code-block-bar">
+            <span class="code-block-lang">${escapeHtml(lang.toUpperCase())}</span>
+            <button class="code-copy-btn" onclick="copySnippet(this)" data-code="${rawSafeAttr}" type="button">📋 复制代码</button>
+          </div>
+          <pre class="code-block-pre"><code>${highlighted}</code></pre>
+        </div>
+      `;
+    } else {
+      let t = escapeHtml(part);
+      t = t.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+      t = t.replace(/\n+/g, '<br/>');
+      html += `<span class="stem-text">${t}</span>`;
+    }
+  }
+
+  return html;
+}
+
+function renderRichText(text) {
+  if (!text) return '';
+  if (text.includes('```')) return renderStem(text);
+  let t = escapeHtml(text);
+  t = t.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+  t = t.replace(/\n+/g, '<br/>');
+  return t;
+}
+
+function copySnippet(btn) {
+  const code = btn.dataset.code || '';
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ 已复制';
+    btn.style.color = 'var(--ok)';
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.style.color = '';
+    }, 1800);
+  }).catch(() => {
+    toast('复制失败，请手动选取');
+  });
+}
+
 function toast(msg) {
   const t = document.getElementById('toast');
   t.innerHTML = `<span style="color:var(--brand)">⚡</span> <span>${escapeHtml(msg)}</span>`;
   t.classList.add('show');
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => t.classList.remove('show'), 2400);
+  toast._t = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function addToBank(questions) {
   const bank = getBank();
-  const set = new Set(bank.map(b => b.qid));
+  const setQid = new Set(bank.map(b => b.qid));
+  const setStem = new Set(bank.map(b => (b.type || '') + '|' + normalizeQuestionStem(b.question)));
   const added = [];
+  let dupCount = 0;
+
   for (const q of questions) {
     const qid = hashQid(q.type, q.question);
-    if (set.has(qid)) continue;
-    set.add(qid);
+    const stemKey = (q.type || '') + '|' + normalizeQuestionStem(q.question);
+    if (setQid.has(qid) || setStem.has(stemKey)) {
+      dupCount++;
+      continue;
+    }
+    setQid.add(qid);
+    setStem.add(stemKey);
     const item = Object.assign({ qid, createdAt: Date.now(), track: 'frontend' }, q);
     bank.push(item);
     added.push(item);
   }
   if (added.length) saveBank(bank);
-  return added.length;
+  return { addedCount: added.length, dupCount };
+}
+
+function deduplicateBank() {
+  const bank = getBank();
+  const seenStem = new Set();
+  const clean = [];
+  let removed = 0;
+  for (const q of bank) {
+    const key = (q.type || '') + '|' + normalizeQuestionStem(q.question);
+    if (seenStem.has(key)) {
+      removed++;
+      continue;
+    }
+    seenStem.add(key);
+    clean.push(q);
+  }
+  if (removed > 0) {
+    saveBank(clean);
+  }
+  return { before: bank.length, after: clean.length, removed };
 }
 
 function getFromBank(qid) {
@@ -1560,7 +1964,7 @@ function sampleFromBank(n, exclusions) {
     picks = picks.concat(pool.slice(0, remain));
   }
 
-  return shuffle(picks).map(q => ({
+  return sortQuestionsByType(picks).map(q => ({
     type: q.type,
     category: q.category,
     question: q.question,
@@ -1570,6 +1974,49 @@ function sampleFromBank(n, exclusions) {
     qid: q.qid,
     createdAt: q.createdAt
   }));
+}
+
+const TYPE_ORDER = { single: 1, multiple: 2, boolean: 3 };
+
+function sortQuestionsByType(questions) {
+  if (!Array.isArray(questions)) return [];
+  return questions.slice().sort((a, b) => {
+    const oa = TYPE_ORDER[a.type] || 99;
+    const ob = TYPE_ORDER[b.type] || 99;
+    return oa - ob;
+  });
+}
+
+function getSectionInfo(type, count) {
+  if (type === 'multiple') {
+    return {
+      icon: '📙',
+      title: t('sectionMultipleTitle'),
+      desc: t('sectionMultipleDesc', { count }),
+      navLabel: t('sectionNavMultiple')
+    };
+  }
+  if (type === 'boolean') {
+    return {
+      icon: '📗',
+      title: t('sectionBooleanTitle'),
+      desc: t('sectionBooleanDesc', { count }),
+      navLabel: t('sectionNavBoolean')
+    };
+  }
+  return {
+    icon: '📘',
+    title: t('sectionSingleTitle'),
+    desc: t('sectionSingleDesc', { count }),
+    navLabel: t('sectionNavSingle')
+  };
+}
+
+function scrollToExamSection(type) {
+  const el = document.getElementById('section_' + type);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 /* ==========================================================================
@@ -1625,7 +2072,7 @@ function normalizeProvider(p) {
   return (p && PROVIDER_PRESETS[p]) ? p : 'pollinations';
 }
 
-function buildPrompt(part, exclusions) {
+function buildPrompt(part, exclusions, negativeExamples) {
   let exclusionRule = '';
   if (exclusions && exclusions.length > 0) {
     const exStr = exclusions.join('、');
@@ -1636,11 +2083,34 @@ function buildPrompt(part, exclusions) {
 `;
   }
 
+  let antiDupRule = '';
+  if (negativeExamples && negativeExamples.length > 0) {
+    const samples = negativeExamples.slice(0, 15).map((q, i) => `${i + 1}. ${q}`).join('\n');
+    antiDupRule = `
+【CRITICAL ANTI-DUPLICATION / 防重复考点避让规则】：
+系统题库中已有以下典型考点题目，严禁出题干雷同、核心考点完全一样的重复题目，请发掘更丰富、更多元的前端深度实战考点：
+${samples}
+`;
+  }
+
+  const codeRule = `
+【CRITICAL CODE FORMATTING RULE / 代码排版与格式规范】：
+1. 凡是包含代码片段的题目，严禁把代码挤在同一行拼凑！题干中必须使用 Markdown 代码块包裹：
+\`\`\`javascript
+// 代码换行与缩进清晰
+function demo() {
+  console.log("hello");
+}
+\`\`\`
+2. 代码必须保留真实的换行符（\\n）和标准的 2 空格缩进，标点符号规范；单行变量或 API 须用单个反引号包裹（如 \`typeof null\`、\`let\`）。
+`;
+
   const head = `你是资深专业的前端面试出题专家。请严格按照要求生成「Web 前端开发」的高频面试练习题，只返回合法 JSON 数组（严禁任何开场白、废话或 markdown 代码块）。
 
-基础出题范围：JavaScript、Vue2、Vue3、HTML5、CSS3、前端工程化与性能优化。
-难度要求：全部为常见客观题，注重高频核心概念，不要偏门冷门怪题。
+难度要求：全部为客观题，注重核心概念与代码理解，避免低水平常识题，不要偏门冷门怪题。
 ${exclusionRule}
+${antiDupRule}
+${codeRule}
 `;
 
   const fmt = `
@@ -1648,20 +2118,28 @@ ${exclusionRule}
 {
   "type": "single" | "multiple" | "boolean",
   "category": "所属分类简称（如 JavaScript, HTML/CSS, Vue2, Vue3, React, TypeScript, Webpack, Node.js 等）",
-  "question": "清晰题干",
+  "question": "清晰题干（代码或概念需精准无义）",
   "options": ["选项A", "选项B", ...],
   "answer": 数字索引（单选/判断）或 正确选项索引数组（多选，如 [0, 2]）,
-  "explanation": "简明解析（1~2 句话，直击考点）"
+  "explanation": "简明解析（1~2 句话，直击考点本质）"
 }
 要求：解析简练不冗长，确保整体 JSON 完整不被截断；只返回一个纯 JSON 数组。`;
 
-  if (part === 'single') {
+  if (part === 'single1') {
     return head + `
-本批次任务：恰好 40 道单选题（type 为 "single"），每题固定 4 个选项，answer 为正确选项索引（0 到 3）。
+本批次任务：恰好 20 道单选题（type 为 "single"），每题固定 4 个选项，answer 为正确选项索引（0 到 3）。
+出题专属重点方向：【JavaScript 核心基础、ES6+ 进阶特性、异步编程机制（Promise/async/事件循环/微任务）、作用域与闭包、原型与继承】。
+` + fmt;
+  }
+  if (part === 'single2') {
+    return head + `
+本批次任务：恰好 20 道单选题（type 为 "single"），每题固定 4 个选项，answer 为正确选项索引（0 到 3）。
+出题专属重点方向：【前端框架核心原理（Vue2/Vue3/React）、CSS 现代布局（Flexbox/Grid/BFC/定位）与盒模型、HTML5 语义化与 API、现代前端工程化（Vite/Webpack/模块化规范）】。
 ` + fmt;
   }
   return head + `
 本批次任务：共 20 道题 = 10 道多选题（type 为 "multiple"，每题 3~4 个选项，answer 为包含至少2项的索引数组） + 10 道判断题（type 为 "boolean"，options 固定为 ["正确","错误"]，answer 为 0 或 1）。
+出题专属重点方向：【前端性能优化指标（FCP/LCP/防抖节流）、浏览器渲染机制（重绘回流/合成）、网络与 HTTP 缓存策略、Web 安全防护（XSS/CSRF）】。
 ` + fmt;
 }
 
@@ -1755,7 +2233,7 @@ async function callAI(messages, settingsOverride) {
   return (msg && msg.content) || '';
 }
 
-async function generateAIQuestionsWithExclusions(exclusions) {
+async function generateAIQuestionsWithExclusions(exclusions, progressCb) {
   const sys = {
     role: 'system',
     content: '你是专业的前端面试出题官，只出客观基础题，输出纯 JSON 数组。'
@@ -1763,19 +2241,46 @@ async function generateAIQuestionsWithExclusions(exclusions) {
   let qs = [];
   let lastErr = '';
 
-  for (const part of ['single', 'many']) {
-    const prompt = buildPrompt(part, exclusions);
+  // 从已有题库抽取已有考点做负样本防重
+  const existingBank = getBank();
+  const negativeSamples = shuffle(existingBank).slice(0, 20).map(q => q.question);
+
+  // 跨批次及批次内去重缓存
+  const seenStems = new Set(existingBank.map(q => (q.type || '') + '|' + normalizeQuestionStem(q.question)));
+
+  const parts = [
+    { id: 'single1', label: '第 1 批：JavaScript 核心与异步 (20 题)' },
+    { id: 'single2', label: '第 2 批：现代框架与 CSS 工程化 (20 题)' },
+    { id: 'many',    label: '第 3 批：性能优化与综合多选/判断 (20 题)' }
+  ];
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (progressCb) progressCb(i + 1, parts.length, part.label);
+
+    const prompt = buildPrompt(part.id, exclusions, negativeSamples);
+    let partSuccess = false;
+
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
         const text = await callAI([sys, { role: 'user', content: prompt }]);
         const got = parseAIQuestions(text);
         for (const q of got) {
-          if (!questionMatchesExclusions(q, exclusions)) qs.push(q);
+          if (questionMatchesExclusions(q, exclusions)) continue;
+          const stemKey = (q.type || '') + '|' + normalizeQuestionStem(q.question);
+          if (seenStems.has(stemKey)) continue; // 强力去重：过滤批次内自重复及与现有题库重复
+          seenStems.add(stemKey);
+          qs.push(q);
         }
+        partSuccess = true;
         break;
       } catch(e) {
         lastErr = e.message;
       }
+    }
+
+    if (!partSuccess && qs.length === 0) {
+      throw new Error(lastErr || 'AI 生成超时或网络异常');
     }
   }
 
@@ -2016,7 +2521,7 @@ function renderSim() {
       }
 
       const metaDesc = r.generating
-        ? t('roundGenerating')
+        ? (r.progressText || t('roundGenerating'))
         : (r.status === 'done'
             ? t('roundCorrectStats', {
                 correct: r.correct,
@@ -2037,6 +2542,7 @@ function renderSim() {
               <span>🏷 ${escapeHtml(r.source || 'AI 出题')}</span>
               <span>📊 ${metaDesc}</span>
             </div>
+            ${r.warn ? `<div style="color:var(--bad);font-size:12px;margin-top:6px;background:var(--bad-soft);padding:6px 10px;border-radius:6px;line-height:1.4">⚠️ ${t('roundAiFailedDesc', { err: escapeHtml(r.warn) })}</div>` : ''}
           </div>
           <div class="round-actions">
             <button class="del-btn" data-del="${r.roundId}" title="${t('btnDelete')}">🗑️</button>
@@ -2238,6 +2744,7 @@ function generateNewRound() {
   const round = createRound('ai');
   round.source = 'AI 实时出题';
   round.generating = true;
+  round.progressText = '正在联系 AI 引擎准备出题…';
   persistRounds();
   renderSim();
 
@@ -2246,25 +2753,36 @@ function generateNewRound() {
   (async () => {
     let qs = [], source = 'AI 实时出题', warn = null;
     try {
-      const r = await generateAIQuestionsWithExclusions(exclusions);
+      const r = await generateAIQuestionsWithExclusions(exclusions, (cur, total, label) => {
+        const rounds = getRounds();
+        const rIdx = rounds.findIndex(x => x.roundId === round.roundId);
+        if (rIdx >= 0) {
+          rounds[rIdx].progressText = `AI 出题中 (${cur}/${total})：${label}`;
+          persistRounds();
+          if (state.view === 'sim') renderSim();
+        }
+      });
       qs = r.questions;
-      if (qs.length === 0) throw new Error(r.error || 'AI 未返回题目，请检查网络或更换模型');
-      const added = addToBank(qs);
-      if (added > 0) toast(`AI 新题已自动存入你的本地题库 ${added} 道`);
+      if (qs.length === 0) throw new Error(r.error || 'AI 未返回有效题目，请检查网络或更换模型');
+      const addRes = addToBank(qs);
+      if (addRes.addedCount > 0) {
+        toast(`🎉 AI 新题已入库 ${addRes.addedCount} 道（已自动过滤 ${addRes.dupCount} 道重复题目）`);
+      } else {
+        toast(`本轮题目生成完成（共 ${qs.length} 题，全部为已有题目或已存在于题库）`);
+      }
     } catch(e) {
-      // 若 AI 失败且本地题库有题，尝试抽题兜底；若本地也无题，提示用户配置 Key
+      warn = e.message;
+      toast(t('toastAiFallback', { err: e.message }));
       qs = sampleFromBank(60, exclusions);
       if (qs.length === 0) qs = sampleFromBank(60, []);
       if (qs.length > 0) {
-        source = '本地题库 (AI 兜底)';
-        warn = e.message;
+        source = t('roundAiFailedTitle');
       } else {
-        toast('出题失败：' + e.message + '，请在「设置/AI」中检查配置');
-        warn = e.message;
+        source = '出题失败';
       }
     }
 
-    qs = qs.map(q => ({
+    qs = sortQuestionsByType(qs).map(q => ({
       type: q.type,
       category: q.category,
       question: q.question,
@@ -2282,9 +2800,11 @@ function generateNewRound() {
       rounds[idx].source = source;
       rounds[idx].generating = false;
       rounds[idx].warn = warn;
+      delete rounds[idx].progressText;
       persistRounds();
     }
     if (state.view === 'sim') renderSim();
+    else if (state.view === 'bank') renderBank();
   })();
 }
 
@@ -2296,7 +2816,7 @@ function createBankRound() {
     toast('本地题库暂无题目，请点击「生成新一轮」先让 AI 生成题目！');
     return;
   }
-  const qs2 = qs.map(q => ({
+  const qs2 = sortQuestionsByType(qs).map(q => ({
     type: q.type,
     category: q.category,
     question: q.question,
@@ -2361,12 +2881,37 @@ function renderExam(roundId) {
     return;
   }
 
+  // 确保考场中的题目严格按单选 -> 多选 -> 判断有序呈现
+  round.questions = sortQuestionsByType(round.questions);
   state.current = round;
+
   const answeredCount = round.questions.filter(q => q.userAnswer !== null && (q.type !== 'multiple' || (q.userAnswer && q.userAnswer.length > 0))).length;
   const totalCount = round.questions.length;
   const progressPct = totalCount > 0 ? Math.round(answeredCount / totalCount * 100) : 0;
 
+  const typeCounts = {
+    single: round.questions.filter(q => q.type === 'single').length,
+    multiple: round.questions.filter(q => q.type === 'multiple').length,
+    boolean: round.questions.filter(q => q.type === 'boolean').length
+  };
+
+  let lastExamType = null;
   const listHtml = round.questions.map((q, i) => {
+    let sectionBannerHtml = '';
+    if (q.type !== lastExamType) {
+      lastExamType = q.type;
+      const count = typeCounts[q.type] || 0;
+      const info = getSectionInfo(q.type, count);
+      sectionBannerHtml = `
+        <div class="section-divider t-${q.type}" id="section_${q.type}">
+          <div>
+            <div class="section-divider-title">${info.icon} ${info.title}</div>
+            <div class="section-divider-desc">${info.desc}</div>
+          </div>
+        </div>
+      `;
+    }
+
     const badgeText = q.type === 'single'
       ? (currentLang === 'en-US' ? 'Single' : '单选题')
       : (q.type === 'multiple' ? (currentLang === 'en-US' ? 'Multiple' : '多选题') : (currentLang === 'en-US' ? 'Boolean' : '判断题'));
@@ -2379,18 +2924,18 @@ function renderExam(roundId) {
       return `
         <div class="opt ${isSelected ? 'selected' : ''}" data-q="${i}" data-o="${j}">
           <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
-          <span class="opt-text">${escapeHtml(o)}</span>
+          <span class="opt-text">${renderRichText(o)}</span>
         </div>
       `;
     }).join('');
 
-    return `
+    return sectionBannerHtml + `
       <div class="q" id="qitem_${i}">
         <div class="badges">
           <span class="badge t-${q.type}">${badgeText}</span>
           <span class="badge cat">${escapeHtml(q.category)}</span>
         </div>
-        <div class="stem">${escapeHtml(q.question)}</div>
+        <div class="stem">${renderStem(q.question)}</div>
         ${optsHtml}
       </div>
     `;
@@ -2413,6 +2958,13 @@ function renderExam(roundId) {
       <div class="progress-track">
         <div class="progress-bar-fill" id="examProgressBar" style="width:${progressPct}%"></div>
       </div>
+    </div>
+
+    <!-- 题型快速跳转导航栏 -->
+    <div class="exam-section-nav">
+      ${typeCounts.single ? `<button class="section-nav-btn" type="button" onclick="scrollToExamSection('single')">📘 ${t('sectionNavSingle')} (${typeCounts.single})</button>` : ''}
+      ${typeCounts.multiple ? `<button class="section-nav-btn" type="button" onclick="scrollToExamSection('multiple')">📙 ${t('sectionNavMultiple')} (${typeCounts.multiple})</button>` : ''}
+      ${typeCounts.boolean ? `<button class="section-nav-btn" type="button" onclick="scrollToExamSection('boolean')">📗 ${t('sectionNavBoolean')} (${typeCounts.boolean})</button>` : ''}
     </div>
 
     <div class="muted" style="margin-bottom:14px;font-size:12px">
@@ -2518,9 +3070,43 @@ function renderResult(roundId) {
     app.innerHTML = `<div class="card muted">未找到报告。</div>`;
     return;
   }
+  // 确保报告中题目按题型顺序归类展示
+  round.questions = sortQuestionsByType(round.questions);
   const pct = round.total > 0 ? Math.round(round.score / round.total * 100) : 0;
 
+  const typeStats = {
+    single:   { total: 0, score: 0, correct: 0, count: 0 },
+    multiple: { total: 0, score: 0, correct: 0, count: 0 },
+    boolean:  { total: 0, score: 0, correct: 0, count: 0 }
+  };
+  round.questions.forEach(q => {
+    const ts = typeStats[q.type] || typeStats.single;
+    const pt = pointOf(q.type);
+    ts.count++;
+    ts.total += pt;
+    if (isCorrect(q, q.userAnswer)) {
+      ts.score += pt;
+      ts.correct++;
+    }
+  });
+
+  let lastResType = null;
   const itemsHtml = round.questions.map((q, i) => {
+    let sectionBannerHtml = '';
+    if (q.type !== lastResType) {
+      lastResType = q.type;
+      const count = typeStats[q.type] ? typeStats[q.type].count : 0;
+      const info = getSectionInfo(q.type, count);
+      sectionBannerHtml = `
+        <div class="section-divider t-${q.type}" id="res_section_${q.type}">
+          <div>
+            <div class="section-divider-title">${info.icon} ${info.title}</div>
+            <div class="section-divider-desc">${info.desc}</div>
+          </div>
+        </div>
+      `;
+    }
+
     const badgeText = q.type === 'single' ? '单选' : q.type === 'multiple' ? '多选' : '判断';
     const ok = isCorrect(q, q.userAnswer);
 
@@ -2534,7 +3120,7 @@ function renderResult(roundId) {
       return `
         <div class="opt ${cls}">
           <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
-          <span class="opt-text">${escapeHtml(o)}</span>
+          <span class="opt-text">${renderRichText(o)}</span>
           ${isAns ? `<b style="color:var(--ok);font-size:12px;margin-left:auto">✓ 正确答案</b>` : ''}
           ${isUser && !isAns ? `<b style="color:var(--bad);font-size:12px;margin-left:auto">✗ 你的选择</b>` : ''}
         </div>
@@ -2547,20 +3133,20 @@ function renderResult(roundId) {
 
     const ansText = Array.isArray(q.answer) ? q.answer.map(k => String.fromCharCode(65 + k)).join('、') : String.fromCharCode(65 + q.answer);
 
-    return `
+    return sectionBannerHtml + `
       <div class="q">
         <div class="badges">
           <span class="badge t-${q.type}">${badgeText}</span>
           <span class="badge cat">${escapeHtml(q.category)}</span>
           ${ok ? `<span class="pill normal">${t('ansCorrectPill')}</span>` : `<span class="pill wrongbook">${t('ansWrongPill')}</span>`}
         </div>
-        <div class="stem">${escapeHtml(q.question)}</div>
+        <div class="stem">${renderStem(q.question)}</div>
         ${optsHtml}
         <div class="yourans">
           ${t('labelYourAns')}：<span style="font-weight:600;color:${ok ? 'var(--ok)' : 'var(--bad)'}">${uaText}</span>
           　｜　${t('labelCorrectAns')}：<span style="font-weight:600;color:var(--ok)">${ansText}</span>
         </div>
-        <div class="explain">💡 ${t('labelExplanation')}：${escapeHtml(q.explanation)}</div>
+        <div class="explain">💡 ${t('labelExplanation')}：${renderRichText(q.explanation)}</div>
       </div>
     `;
   }).join('');
@@ -2571,6 +3157,32 @@ function renderResult(roundId) {
       <div class="muted" style="margin-top:6px;font-size:14px">
         ${t('roundCorrectStats', { correct: round.correct, wrong: round.wrong, pct })}
       </div>
+
+      <!-- 题型专项得分卡片 -->
+      <div class="type-score-grid">
+        ${typeStats.single.count ? `
+          <div class="type-score-card">
+            <span>📘 ${t('typeScoreSingle')}</span>
+            <b>${Math.round(typeStats.single.score * 10) / 10} <span style="font-size:13px;color:var(--text-muted)">/ ${typeStats.single.total} 分</span></b>
+            <span>正确率: ${typeStats.single.correct} / ${typeStats.single.count} 题</span>
+          </div>
+        ` : ''}
+        ${typeStats.multiple.count ? `
+          <div class="type-score-card t-multiple">
+            <span>📙 ${t('typeScoreMultiple')}</span>
+            <b>${Math.round(typeStats.multiple.score * 10) / 10} <span style="font-size:13px;color:var(--text-muted)">/ ${typeStats.multiple.total} 分</span></b>
+            <span>正确率: ${typeStats.multiple.correct} / ${typeStats.multiple.count} 题</span>
+          </div>
+        ` : ''}
+        ${typeStats.boolean.count ? `
+          <div class="type-score-card t-boolean">
+            <span>📗 ${t('typeScoreBoolean')}</span>
+            <b>${Math.round(typeStats.boolean.score * 10) / 10} <span style="font-size:13px;color:var(--text-muted)">/ ${typeStats.boolean.total} 分</span></b>
+            <span>正确率: ${typeStats.boolean.correct} / ${typeStats.boolean.count} 题</span>
+          </div>
+        ` : ''}
+      </div>
+
       <div class="row" style="justify-content:center;margin-top:20px">
         <button class="btn" id="retryRound">🔄 ${t('btnRetryExam')}</button>
         <button class="btn ghost" id="toWrongBook">💡 ${t('btnToWrong')}</button>
@@ -2646,7 +3258,7 @@ function renderBank() {
         return `
           <div class="opt ${isAns ? 'correct' : ''}">
             <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
-            <span class="opt-text">${escapeHtml(o)}</span>
+            <span class="opt-text">${renderRichText(o)}</span>
             ${isAns ? `<b style="color:var(--ok);font-size:12px;margin-left:auto">✓ 正确答案</b>` : ''}
           </div>
         `;
@@ -2659,9 +3271,9 @@ function renderBank() {
             <span class="badge cat">${escapeHtml(q.category)}</span>
             <span class="muted" style="font-size:11px;margin-left:auto">入库时间：${fmtTime(q.createdAt)}</span>
           </div>
-          <div class="stem">${escapeHtml(q.question)}</div>
+          <div class="stem">${renderStem(q.question)}</div>
           ${optsHtml}
-          <div class="explain">🎯 答案：${ansText} ｜ ${escapeHtml(q.explanation)}</div>
+          <div class="explain">🎯 答案：${ansText} ｜ ${renderRichText(q.explanation)}</div>
         </div>
       `;
     }).join('');
@@ -2672,7 +3284,7 @@ function renderBank() {
           <span>${escapeHtml(cat)} <b style="color:var(--brand)">(${qs.length})</b></span>
           <span class="muted" style="font-size:12px">点击展开 / 折叠 ▾</span>
         </summary>
-        <div style="margin-top:16px">${itemsHtml}</div>
+        <div style="margin-top:16px;counter-reset: q 0;">${itemsHtml}</div>
       </details>
     `;
   }).join('');
@@ -2683,9 +3295,10 @@ function renderBank() {
       <p class="muted">${t('bankDesc', { count: bank.length })}</p>
 
       <!-- 多维度手动搜索 -->
-      <div class="row" style="margin-top:16px">
-        <input type="text" id="bankSearchInp" placeholder="${t('searchBankPlaceholder')}" value="${escapeHtml(state.bankSearch)}" style="max-width:480px" />
+      <div class="row" style="margin-top:16px;flex-wrap:wrap;gap:8px">
+        <input type="text" id="bankSearchInp" placeholder="${t('searchBankPlaceholder')}" value="${escapeHtml(state.bankSearch)}" style="max-width:480px;flex:1" />
         <button class="btn soft" id="bankRound3">🎲 ${t('btnSampleBank')}</button>
+        <button class="btn soft" id="btnCleanBank">🧹 ${t('btnCleanBank')}</button>
       </div>
 
       <!-- 与首页一致的分类过滤栏（增加“其他”） -->
@@ -2698,6 +3311,19 @@ function renderBank() {
   `;
 
   document.getElementById('bankRound3').onclick = createBankRound;
+  const cleanBtn = document.getElementById('btnCleanBank');
+  if (cleanBtn) {
+    cleanBtn.onclick = () => {
+      const res = deduplicateBank();
+      if (res.removed > 0) {
+        toast(t('toastBankCleaned', { count: res.removed }));
+      } else {
+        toast('当前题库非常纯净，未发现任何重复题目！');
+      }
+      renderBank();
+    };
+  }
+
   const sInp = document.getElementById('bankSearchInp');
   sInp.oninput = () => {
     state.bankSearch = sInp.value;
@@ -2752,7 +3378,7 @@ function renderWrong() {
       return `
         <div class="opt ${isAns ? 'correct' : ''}">
           <span class="opt-shortcut">${String.fromCharCode(65 + j)}</span>
-          <span class="opt-text">${escapeHtml(o)}</span>
+          <span class="opt-text">${renderRichText(o)}</span>
           ${isAns ? `<b style="color:var(--ok);font-size:12px;margin-left:auto">✓ 正确答案</b>` : ''}
         </div>
       `;
@@ -2765,12 +3391,12 @@ function renderWrong() {
           <span class="badge cat">${escapeHtml(q.category)}</span>
           <span class="pill wrongbook">${t('wrongStatsMeta', { count: e.wrongCount, time: fmtTime(e.lastWrong), streak: e.correctStreak || 0 })}</span>
         </div>
-        <div class="stem">${escapeHtml(q.question)}</div>
+        <div class="stem">${renderStem(q.question)}</div>
         ${optsHtml}
         <div class="yourans">
           ${t('labelCorrectAns')}：<span style="font-weight:600;color:var(--ok)">${ansText}</span>
         </div>
-        <div class="explain">💡 ${t('labelExplanation')}：${escapeHtml(q.explanation)}</div>
+        <div class="explain">💡 ${t('labelExplanation')}：${renderRichText(q.explanation)}</div>
       </div>
     `;
   }).join('');
@@ -2805,7 +3431,7 @@ function renderWrong() {
       </div>
     </div>
 
-    <div>${itemsHtml}</div>
+    <div style="counter-reset: q ${startIdx};">${itemsHtml}</div>
     ${paginationHtml}
   `;
 
