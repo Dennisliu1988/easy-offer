@@ -1104,6 +1104,56 @@
     color: var(--brand);
     font-weight: 600;
   }
+
+  /* 返回顶部悬浮按钮 (FAB) */
+  .fab-back-to-top {
+    position: fixed;
+    right: 28px;
+    bottom: 32px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-surface-elevated, #1e293b);
+    color: var(--text-primary, #f8fafc);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.9);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .fab-back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+  .fab-back-to-top:hover {
+    background: var(--brand, #4f46e5);
+    color: #ffffff;
+    border-color: var(--brand);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 14px 30px -4px rgba(79, 70, 229, 0.45);
+  }
+  .fab-back-to-top svg {
+    transition: transform 0.2s ease;
+  }
+  .fab-back-to-top:hover svg {
+    transform: translateY(-2px);
+  }
+  .fab-back-to-top span {
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+  }
 </style>
 </head>
 <body>
@@ -1215,6 +1265,14 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- 悬浮返回顶部按钮 (随滚动平滑显示) -->
+<button class="fab-back-to-top" id="fabBackToTop" title="返回顶部" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>
+  <span>顶部</span>
+</button>
 
 <script>
 "use strict";
@@ -1689,8 +1747,160 @@ function getSettings() {
 }
 
 /* ==========================================================================
-   6. 工具与排除法过滤
+   6. 前端全景深度考点知识图谱 & 智能题目指纹防重引擎
    ========================================================================== */
+const FRONTEND_KNOWLEDGE_SPECTRUM = [
+  {
+    category: 'JavaScript',
+    topics: [
+      'BigInt 边界、Symbol 作为私有属性及内置 Symbol（toPrimitive/hasInstance）机制',
+      '隐式类型转换 ToPrimitive 规范、NaN 与 Object.is 比较、装箱与拆箱底层机制',
+      '词法环境、变量环境与暂时性死区 TDZ 规范细节及底层原理',
+      '执行上下文栈与 V8 垃圾回收分代算法（Scavenge 空间复制与 Mark-Sweep 标记清除）',
+      '闭包内存引用的生命周期与 WeakMap/WeakSet 弱引用防止内存泄漏实战',
+      '4 种 this 绑定优先级、箭头函数底层行为与 bind 柯里化函数实现',
+      '原型链顶端、寄生组合式继承底层实现与 Object.create(null) 特性',
+      'Proxy 13 种拦截器（get/set/has/ownKeys）与 Reflect 配合处理 Receiver',
+      'Promise 规范底层状态不可逆性与 Promise.allSettled / any / race 区别',
+      '微任务宏任务执行瀑布流与 MutationObserver / queueMicrotask 插入执行时机',
+      'ES2020~2024 现代特性：toSorted, toSpliced, Array.at, Object.hasOwn'
+    ]
+  },
+  {
+    category: 'HTML/CSS',
+    topics: [
+      'BFC 与 IFC 格式化上下文完整触发场景、清除浮动与防止 margin 穿透机制',
+      'Flexbox 剩余空间分配与负空间收缩算法（flex-grow, flex-shrink, flex-basis 权重计算）',
+      'CSS Grid 复杂网格系统（minmax 函数、auto-fill 与 auto-fit 响应式区别）',
+      '层叠上下文（Stacking Context）形成的 12 种诱因与 z-index 常见失效排查',
+      '现代 CSS 新规范：CSS 变量层叠继承作用域、:has() 父级选择器与 @container 容器查询',
+      '浏览器渲染流水线：DOM 树与 CSSOM 构建过程、CSS 阻塞与 JS async/defer 细节',
+      '重绘（Repaint）、回流（Reflow）触发原因与硬件加速合成层（Compositing）性能考量',
+      'DOM 现代观察者 API：IntersectionObserver 图片懒加载、ResizeObserver 与 MutationObserver',
+      '事件模型：捕获冒泡传播顺序、passive 监听器提升滚动流畅度与自定义事件 CustomEvent'
+    ]
+  },
+  {
+    category: 'Vue2',
+    topics: [
+      'Vue2 响应式原理：Object.defineProperty 拦截对象与重写 7 个数组方法的深层机制',
+      'Dep 与 Watcher 双向依赖收集机制与视图异步更新队列 queueWatcher',
+      '虚拟 DOM 与 Vue2 双端指针 Diff 算法详细对比过程与 key 的唯一性作用',
+      'nextTick 底层实现：Promise、MutationObserver、setImmediate 与 setTimeout 的降级策略',
+      'keep-alive 组件的 LRU 缓存淘汰算法与 activated/deactivated 生命周期触发时机',
+      'Vue2 父子组件生命周期执行瀑布流顺序与 provide/inject 响应式陷阱',
+      'Vue.set / vm.$set 的底层实现与数组索引修改响应式补救'
+    ]
+  },
+  {
+    category: 'Vue3',
+    topics: [
+      'Vue3 Proxy 响应式系统：track 与 trigger 依赖收集与 ReactiveEffect 原理',
+      'ref 与 reactive 底层差异、RefImpl 类与 unref / toRef / toRefs 响应式解构',
+      'Vue3 快速 Diff 算法：预处理前后相同节点与最长递增子序列（LIS）优化位移',
+      '组合式 API（Composition API）心智模型与自定义 hook 封装复用最佳实践',
+      '编译器静态提升（hoistStatic）、PatchFlag 动态标记与 Block Tree 缓存优化'
+    ]
+  },
+  {
+    category: 'Webpack',
+    topics: [
+      'ES Module 静态编译只读引用 vs CommonJS 运行时动态加载/浅拷贝值缓存区别',
+      'Webpack Tapable 事件流架构与 Compiler / Compilation 核心生命周期区别',
+      'Loader 执行链式机制（pitch 阶段与 normal 阶段）与 Plugin 源码机制',
+      'Tree-shaking 前提条件（ESM、sideEffects 标记）与无用代码消除原理',
+      'Vite 开发时基于原生 ESM 的 no-bundle 原理与生产环境 Rollup 作用域提升'
+    ]
+  },
+  {
+    category: 'React',
+    topics: [
+      'React Fiber 双缓存树架构与单向链表遍历机制',
+      'Hooks 原理与规则：为什么不能在条件语句中调用 Hook（链表存取顺序）',
+      '状态更新与调度：batchedUpdates 批量更新与并发模式（Concurrent Mode）',
+      'useMemo / useCallback / React.memo 的性能优化边界与闭包陷阱'
+    ]
+  },
+  {
+    category: 'TypeScript',
+    topics: [
+      'TS 核心类型操作：keyof, typeof, in, extends 与条件类型（Conditional Types）',
+      '泛型约束、infer 类型推断与常用内置工具类型（Partial, Pick, Record, Omit）源码实现',
+      '类型保护（Type Guard）：typeof, instanceof, in 与自定义类型谓词（is 关键字）',
+      'interface 与 type 的异同、声明合并（Declaration Merging）机制'
+    ]
+  },
+  {
+    category: '网络与安全',
+    topics: [
+      'HTTP 强缓存（Cache-Control max-age/s-maxage）与协商缓存（ETag/If-None-Match）细节',
+      'HTTP/1.1 管道化 vs HTTP/2 多路复用与头部压缩 HPACK vs HTTP/3 基于 UDP 的 QUIC 协议',
+      'XSS 3 种形态（反射/存储/DOM）与 CSP 内容安全策略指令纵深防护',
+      'CSRF 攻击根源与 SameSite Cookie 属性规范及 Token 防护',
+      'CORS 跨域预检请求（Preflight OPTIONS）的触发条件与关键响应头',
+      'WebSocket 协议握手过程与心跳保活机制、SSE 服务端推送'
+    ]
+  },
+  {
+    category: '性能与工程化',
+    topics: [
+      'Core Web Vitals 核心指标：LCP、INP、CLS 真实定义与优化技术',
+      '防抖（debounce）与节流（throttle）手写边界条件与 immediate 立即执行设计',
+      '大数据量虚拟列表（Virtual List）可视区渲染与动态高度计算原理',
+      '长任务（Long Tasks）切片处理与 requestIdleCallback / scheduler 调度'
+    ]
+  }
+];
+
+// 提取代码块核心特征（去除单行多行注释、空格、分号、单双引号、换行）
+function extractCleanCode(text) {
+  if (!text) return '';
+  const codeMatches = text.match(/```(?:[a-zA-Z0-9_-]*\n)?([\s\S]*?)```/g);
+  if (!codeMatches) return '';
+  return codeMatches.map(m => {
+    return m.replace(/```[a-zA-Z0-9_-]*\n?/g, '')
+      .replace(/```/g, '')
+      .replace(/\/\/[^\n]*/g, '')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/[\s;,'"``]+/g, '');
+  }).join('__');
+}
+
+// 提取题干核心纯文本（去除常见八股模板套话与标点符号）
+function extractCoreStem(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/```[\s\S]*?```/g, ' ')
+    .toLowerCase()
+    .replace(/^(以下|下列|下面|关于|在|请问|请选出)[\s\S]{0,10}?(代码|程序|中|的|说法|表达式|选项|操作)?(输出是|输出结果是|运行结果是|结果是|正确的是|错误的是|不正确的是|描述正确的是|描述错误的是|哪个是|哪项是|不属于|属于|主要作用是|指的是)?[？?：:]*/g, '')
+    .replace(/[\s\p{P}\p{S}]+/gu, '');
+}
+
+// 规范化选项集合与正确答案
+function extractNormalizedOptions(opts) {
+  return (opts || [])
+    .map(o => String(o).trim().toLowerCase().replace(/[\s\p{P}\p{S}]+/gu, ''))
+    .sort()
+    .join('|');
+}
+
+// 计算多维题目特征签名（唯一指纹，用于深度去重）
+function getQuestionSignature(q) {
+  if (!q) return '';
+  const type = q.type || 'single';
+  const cleanCode = extractCleanCode(q.question);
+  if (cleanCode && cleanCode.length >= 8) {
+    return `${type}:::CODE:::${cleanCode}`;
+  }
+  const cleanStem = extractCoreStem(q.question);
+  const cleanOpts = extractNormalizedOptions(q.options);
+  const cleanAns = Array.isArray(q.answer) ? q.answer.slice().sort().join(',') : String(q.answer);
+  if (cleanOpts && cleanOpts.length >= 6) {
+    return `${type}:::OPTS:::${cleanOpts}:::ANS:::${cleanAns}:::STEM:::${cleanStem.slice(0, 10)}`;
+  }
+  return `${type}:::STEM:::${cleanStem || normalizeQuestionStem(q.question)}`;
+}
+
 function normalizeQuestionStem(s) {
   return String(s || '')
     .toLowerCase()
@@ -1698,10 +1908,9 @@ function normalizeQuestionStem(s) {
 }
 
 function hashQid(type, q) {
-  const norm = normalizeQuestionStem(q);
-  const s = (type || '') + '|' + (norm || String(q || '').trim().toLowerCase());
+  const sig = getQuestionSignature({ type, question: q });
   let h = 5381;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  for (let i = 0; i < sig.length; i++) h = ((h << 5) + h + sig.charCodeAt(i)) | 0;
   return 'q' + (h >>> 0).toString(36);
 }
 
@@ -1878,20 +2087,20 @@ function toast(msg) {
 
 function addToBank(questions) {
   const bank = getBank();
+  const setSignatures = new Set(bank.map(b => getQuestionSignature(b)));
   const setQid = new Set(bank.map(b => b.qid));
-  const setStem = new Set(bank.map(b => (b.type || '') + '|' + normalizeQuestionStem(b.question)));
   const added = [];
   let dupCount = 0;
 
   for (const q of questions) {
+    const sig = getQuestionSignature(q);
     const qid = hashQid(q.type, q.question);
-    const stemKey = (q.type || '') + '|' + normalizeQuestionStem(q.question);
-    if (setQid.has(qid) || setStem.has(stemKey)) {
+    if (setSignatures.has(sig) || setQid.has(qid)) {
       dupCount++;
       continue;
     }
+    setSignatures.add(sig);
     setQid.add(qid);
-    setStem.add(stemKey);
     const item = Object.assign({ qid, createdAt: Date.now(), track: 'frontend' }, q);
     bank.push(item);
     added.push(item);
@@ -1902,18 +2111,23 @@ function addToBank(questions) {
 
 function deduplicateBank() {
   const bank = getBank();
-  const seenStem = new Set();
+  const seenSignatures = new Set();
+  const seenQids = new Set();
   const clean = [];
   let removed = 0;
+
   for (const q of bank) {
-    const key = (q.type || '') + '|' + normalizeQuestionStem(q.question);
-    if (seenStem.has(key)) {
+    const sig = getQuestionSignature(q);
+    const qid = q.qid || hashQid(q.type, q.question);
+    if (seenSignatures.has(sig) || seenQids.has(qid)) {
       removed++;
       continue;
     }
-    seenStem.add(key);
+    seenSignatures.add(sig);
+    seenQids.add(qid);
     clean.push(q);
   }
+
   if (removed > 0) {
     saveBank(clean);
   }
@@ -1934,6 +2148,7 @@ function questionMatchesExclusions(q, exclusions) {
   return false;
 }
 
+// 采用「防疲劳发牌箱 (Deck Shuffling) 与曝光冷却」机制，优先抽选近期未出过的冷题目
 function sampleFromBank(n, exclusions) {
   const allBank = getBank();
   if (allBank.length === 0) return [];
@@ -1943,6 +2158,19 @@ function sampleFromBank(n, exclusions) {
   }
   if (bank.length === 0) return [];
 
+  // 1. 获取最近 5 轮历史作答中的题目曝光权重
+  const rounds = getRounds();
+  const recentRounds = rounds.slice(-5);
+  const exposureMap = new Map();
+  recentRounds.forEach((r, roundIdx) => {
+    const weight = roundIdx + 1; // 越近的轮次权重越大
+    (r.questions || []).forEach(q => {
+      const qid = q.qid || hashQid(q.type, q.question);
+      exposureMap.set(qid, (exposureMap.get(qid) || 0) + weight);
+    });
+  });
+
+  // 2. 按题型分组
   const byType = { single: [], multiple: [], boolean: [] };
   for (const q of bank) {
     if (byType[q.type]) byType[q.type].push(q);
@@ -1954,14 +2182,28 @@ function sampleFromBank(n, exclusions) {
     boolean: Math.min(10, byType.boolean.length)
   };
 
+  // 冷却优先抽样算法：低曝光（甚至 0 曝光）排在最前，同等曝光度内随机打乱
+  function pickCoolQuestions(pool, count) {
+    if (pool.length <= count) return shuffle(pool);
+    const sorted = pool.slice().sort((a, b) => {
+      const qidA = a.qid || hashQid(a.type, a.question);
+      const qidB = b.qid || hashQid(b.type, b.question);
+      const expA = exposureMap.get(qidA) || 0;
+      const expB = exposureMap.get(qidB) || 0;
+      if (expA !== expB) return expA - expB;
+      return Math.random() - 0.5;
+    });
+    return sorted.slice(0, count);
+  }
+
   let picks = [];
   for (const t of ['single', 'multiple', 'boolean']) {
-    picks = picks.concat(shuffle(byType[t]).slice(0, want[t]));
+    picks = picks.concat(pickCoolQuestions(byType[t], want[t]));
   }
   let remain = n - picks.length;
   if (remain > 0) {
-    const pool = shuffle(bank.filter(q => !picks.includes(q)));
-    picks = picks.concat(pool.slice(0, remain));
+    const pool = bank.filter(q => !picks.includes(q));
+    picks = picks.concat(pickCoolQuestions(pool, remain));
   }
 
   return sortQuestionsByType(picks).map(q => ({
@@ -1971,7 +2213,7 @@ function sampleFromBank(n, exclusions) {
     options: q.options.slice(),
     answer: Array.isArray(q.answer) ? q.answer.slice() : q.answer,
     explanation: q.explanation,
-    qid: q.qid,
+    qid: q.qid || hashQid(q.type, q.question),
     createdAt: q.createdAt
   }));
 }
@@ -2072,6 +2314,38 @@ function normalizeProvider(p) {
   return (p && PROVIDER_PRESETS[p]) ? p : 'pollinations';
 }
 
+function getRotatingTopicsForPart(part, exclusions) {
+  const ex = (exclusions || []).map(x => String(x).toLowerCase().trim());
+  const isExcluded = (catName) => {
+    return ex.some(e => e && (catName.toLowerCase().includes(e) || e.includes(catName.toLowerCase())));
+  };
+
+  let targetCategories = [];
+  if (part === 'single1') {
+    targetCategories = ['JavaScript'];
+  } else if (part === 'single2') {
+    targetCategories = ['HTML/CSS', 'Vue2', 'Vue3', 'React', 'TypeScript', 'Webpack'];
+  } else {
+    targetCategories = ['网络与安全', '性能与工程化', 'JavaScript', 'HTML/CSS', 'Vue2'];
+  }
+
+  const validSpectrum = FRONTEND_KNOWLEDGE_SPECTRUM.filter(s => {
+    return targetCategories.includes(s.category) && !isExcluded(s.category);
+  });
+
+  const allTopics = [];
+  validSpectrum.forEach(s => {
+    (s.topics || []).forEach(t => allTopics.push(`【${s.category}】${t}`));
+  });
+
+  if (allTopics.length === 0) {
+    return ['Web 前端核心标准与核心运行机制'];
+  }
+
+  // 每次随机挑选 4 ~ 6 个互不相同的深度子考点
+  return shuffle(allTopics).slice(0, Math.min(6, allTopics.length));
+}
+
 function buildPrompt(part, exclusions, negativeExamples) {
   let exclusionRule = '';
   if (exclusions && exclusions.length > 0) {
@@ -2085,13 +2359,23 @@ function buildPrompt(part, exclusions, negativeExamples) {
 
   let antiDupRule = '';
   if (negativeExamples && negativeExamples.length > 0) {
-    const samples = negativeExamples.slice(0, 15).map((q, i) => `${i + 1}. ${q}`).join('\n');
+    const samples = negativeExamples.slice(0, 25).map((q, i) => `${i + 1}. ${q.replace(/\n/g, ' ').slice(0, 80)}`).join('\n');
     antiDupRule = `
 【CRITICAL ANTI-DUPLICATION / 防重复考点避让规则】：
 系统题库中已有以下典型考点题目，严禁出题干雷同、核心考点完全一样的重复题目，请发掘更丰富、更多元的前端深度实战考点：
 ${samples}
 `;
   }
+
+  // 动态抽取本批次的微观深度考点，彻底打破大模型千篇一律的思维惯性
+  const activeTopics = getRotatingTopicsForPart(part, exclusions);
+  const topicsStr = activeTopics.map((t, idx) => `  ${idx + 1}. ${t}`).join('\n');
+
+  const microTopicRule = `
+【CRITICAL KNOWLEDGE SPECTRUM / 本批次必须重点覆盖的微观深度考点清单】：
+请仔细阅读以下定向考点，本次生成的题目必须紧扣并深度覆盖以下知识点（每点出 3~4 题），严禁只出浮于表面的宽泛概念题：
+${topicsStr}
+`;
 
   const codeRule = `
 【CRITICAL CODE FORMATTING RULE / 代码排版与格式规范】：
@@ -2110,6 +2394,7 @@ function demo() {
 难度要求：全部为客观题，注重核心概念与代码理解，避免低水平常识题，不要偏门冷门怪题。
 ${exclusionRule}
 ${antiDupRule}
+${microTopicRule}
 ${codeRule}
 `;
 
@@ -2118,7 +2403,7 @@ ${codeRule}
 {
   "type": "single" | "multiple" | "boolean",
   "category": "所属分类简称（如 JavaScript, HTML/CSS, Vue2, Vue3, React, TypeScript, Webpack, Node.js 等）",
-  "question": "清晰题干（代码或概念需精准无义）",
+  "question": "清晰题干（代码或概念需精准无误）",
   "options": ["选项A", "选项B", ...],
   "answer": 数字索引（单选/判断）或 正确选项索引数组（多选，如 [0, 2]）,
   "explanation": "简明解析（1~2 句话，直击考点本质）"
@@ -2128,18 +2413,18 @@ ${codeRule}
   if (part === 'single1') {
     return head + `
 本批次任务：恰好 20 道单选题（type 为 "single"），每题固定 4 个选项，answer 为正确选项索引（0 到 3）。
-出题专属重点方向：【JavaScript 核心基础、ES6+ 进阶特性、异步编程机制（Promise/async/事件循环/微任务）、作用域与闭包、原型与继承】。
+出题专属重点方向：结合上述【微观深度考点清单】，重点考察 JavaScript 核心与底层机制、异步流转、闭包边界与 ECMAScript 进阶。
 ` + fmt;
   }
   if (part === 'single2') {
     return head + `
 本批次任务：恰好 20 道单选题（type 为 "single"），每题固定 4 个选项，answer 为正确选项索引（0 到 3）。
-出题专属重点方向：【前端框架核心原理（Vue2/Vue3/React）、CSS 现代布局（Flexbox/Grid/BFC/定位）与盒模型、HTML5 语义化与 API、现代前端工程化（Vite/Webpack/模块化规范）】。
+出题专属重点方向：结合上述【微观深度考点清单】，重点考察前端框架原理、CSS 现代布局与层叠算法、浏览器渲染与现代工程化。
 ` + fmt;
   }
   return head + `
 本批次任务：共 20 道题 = 10 道多选题（type 为 "multiple"，每题 3~4 个选项，answer 为包含至少2项的索引数组） + 10 道判断题（type 为 "boolean"，options 固定为 ["正确","错误"]，answer 为 0 或 1）。
-出题专属重点方向：【前端性能优化指标（FCP/LCP/防抖节流）、浏览器渲染机制（重绘回流/合成）、网络与 HTTP 缓存策略、Web 安全防护（XSS/CSRF）】。
+出题专属重点方向：结合上述【微观深度考点清单】，重点考察网络缓存与安全、现代观察者 API、性能指标与综合实战。
 ` + fmt;
 }
 
@@ -2241,17 +2526,18 @@ async function generateAIQuestionsWithExclusions(exclusions, progressCb) {
   let qs = [];
   let lastErr = '';
 
-  // 从已有题库抽取已有考点做负样本防重
+  // 从已有题库抽取多达 25 道题做负样本防重避让
   const existingBank = getBank();
-  const negativeSamples = shuffle(existingBank).slice(0, 20).map(q => q.question);
+  const negativeSamples = shuffle(existingBank).slice(0, 25).map(q => q.question);
 
-  // 跨批次及批次内去重缓存
-  const seenStems = new Set(existingBank.map(q => (q.type || '') + '|' + normalizeQuestionStem(q.question)));
+  // 跨批次及批次内题目指纹去重缓存（包含已有题库的多维指纹）
+  const seenSignatures = new Set(existingBank.map(q => getQuestionSignature(q)));
+  const seenQids = new Set(existingBank.map(q => q.qid || hashQid(q.type, q.question)));
 
   const parts = [
-    { id: 'single1', label: '第 1 批：JavaScript 核心与异步 (20 题)' },
-    { id: 'single2', label: '第 2 批：现代框架与 CSS 工程化 (20 题)' },
-    { id: 'many',    label: '第 3 批：性能优化与综合多选/判断 (20 题)' }
+    { id: 'single1', label: '第 1 批：JavaScript 深度核心与异步 (20 题)' },
+    { id: 'single2', label: '第 2 批：现代框架原理与 CSS/工程化 (20 题)' },
+    { id: 'many',    label: '第 3 批：网络安全、性能指标与综合题 (20 题)' }
   ];
 
   for (let i = 0; i < parts.length; i++) {
@@ -2267,9 +2553,11 @@ async function generateAIQuestionsWithExclusions(exclusions, progressCb) {
         const got = parseAIQuestions(text);
         for (const q of got) {
           if (questionMatchesExclusions(q, exclusions)) continue;
-          const stemKey = (q.type || '') + '|' + normalizeQuestionStem(q.question);
-          if (seenStems.has(stemKey)) continue; // 强力去重：过滤批次内自重复及与现有题库重复
-          seenStems.add(stemKey);
+          const sig = getQuestionSignature(q);
+          const qid = hashQid(q.type, q.question);
+          if (seenSignatures.has(sig) || seenQids.has(qid)) continue; // 高精度多维指纹去重
+          seenSignatures.add(sig);
+          seenQids.add(qid);
           qs.push(q);
         }
         partSuccess = true;
@@ -2973,8 +3261,9 @@ function renderExam(roundId) {
 
     <div id="examQuestionsList">${listHtml}</div>
 
-    <div class="card" style="text-align:center;margin-top:24px">
+    <div class="card" style="text-align:center;margin-top:24px;display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap">
       <button class="btn" id="submitExamBottom" style="padding:12px 32px;font-size:16px">🎯 ${t('btnSubmitExam')}</button>
+      <button class="btn soft" id="btnBackToTopInExam" style="padding:12px 24px;font-size:15px">⬆️ ${currentLang === 'en-US' ? 'Back to Top' : '返回顶部'}</button>
     </div>
   `;
 
@@ -2988,6 +3277,10 @@ function renderExam(roundId) {
 
   document.getElementById('submitExamTop').onclick = submitExam;
   document.getElementById('submitExamBottom').onclick = submitExam;
+  const btnTopExam = document.getElementById('btnBackToTopInExam');
+  if (btnTopExam) {
+    btnTopExam.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   document.getElementById('exitExam').onclick = () => go('sim');
 
   setupExamKeyboardListener();
@@ -3581,6 +3874,19 @@ function renderSettings() {
 function setupInteractions() {
   document.getElementById('langSwitch').onclick = toggleLanguage;
   document.getElementById('themeSwitchBtn').onclick = toggleTheme;
+
+  // 悬浮返回顶部按钮交互绑定
+  const fab = document.getElementById('fabBackToTop');
+  if (fab) {
+    fab.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 240) {
+        fab.classList.add('visible');
+      } else {
+        fab.classList.remove('visible');
+      }
+    }, { passive: true });
+  }
 
   document.querySelectorAll('.role-item').forEach(el => {
     el.onclick = () => switchRole(el.dataset.role);
